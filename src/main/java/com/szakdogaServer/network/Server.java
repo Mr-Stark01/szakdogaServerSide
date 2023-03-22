@@ -15,20 +15,26 @@ public class Server {
 
     public void start(int port) throws IOException {
         serverSocket = new ServerSocket(port);
+
+        System.out.println(serverSocket.getLocalSocketAddress());
         players = new ArrayList<>();
-        //System.out.println(serverSocket.getLocalPort());
-        while(players.size()<2){
+        while(players.size()<1){
+            System.out.println(players.size());
             players.add(serverSocket.accept());
         }
-        Future<Integer> future = executor.submit(new FileClientHandler(players.get(0)));
-        Future<Integer> future2 = executor.submit(new FileClientHandler(players.get(1)));
-        future.isDone(); future2.isDone();
+        System.out.println("Both player have connected.");
+        //Future<Integer> future = executor.submit(new FileClientHandler(players.get(0)));
+        //Future<Integer> future2 = executor.submit(new FileClientHandler(players.get(1)));
+        //future.isDone();
+        //future2.isDone();
         try{
-            executor.submit(new GameClientHandler(players.get(0)));
-            executor.submit(new GameClientHandler(players.get(1)));
+            Future<Integer> future = executor.submit(new GameClientHandler(players.get(0)));
+            //executor.submit(new GameClientHandler(players.get(1)));
+            future.isDone();
         }catch (InterruptedException e){
 
         }
+
         stop();
     }
     public void stop() throws IOException {
