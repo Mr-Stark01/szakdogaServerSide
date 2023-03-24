@@ -12,8 +12,9 @@ import java.util.concurrent.Callable;
 
 public class GameClientHandler implements Callable<Integer> {//TODO tesztelés tényleges androidon futó alkalmazás nélkül setupolni valamit
     private final Socket clientSocket;
-    private static ObjectOutputStream objectOutputStream = null;
-    private static ObjectInputStream objectInputStream = null;
+    private static ObjectOutputStream objectOutputStream;
+    private DTO dto;
+    private static ObjectInputStream objectInputStream;
     //TODO blocking quet olvasni csak és onnan sendData
     public GameClientHandler(Socket socket) throws InterruptedException {
         this.clientSocket = socket;
@@ -26,17 +27,25 @@ public class GameClientHandler implements Callable<Integer> {//TODO tesztelés t
     }
 
     @Override
-    public Integer call() throws Exception {
-        System.out.println("hereateleast");
+    public Integer call() {
         while(true){//TODO szétszedni kétfelé
-            receiveData();
-            sendData();
+            try {
+                receiveData();
+                calculate(dto);
+                sendData();
+
+            }
+            catch (ClassNotFoundException e){
+                //e.printStackTrace();
+            }
+            catch (IOException e){
+                //e.printStackTrace();
+            }
         }
     }
     public ArrayList receiveData() throws IOException, ClassNotFoundException {//TODO csak deseralizal és berakja blocking queue ba
-        Date dto  = (Date) objectInputStream.readObject();
-        System.out.println("Client:\t"+dto.getTime());
-        System.out.println("This pc:\t"+new Date().getTime());
+
+        DTO dto  = (DTO) objectInputStream.readObject();
         //DTO dto2 = (DTO) objectInputStream.readObject();//TODO csak adja ki a másik osztálynak + küllön szálra kiteni
         return null;
     }// TODO id alapján lehet kiolvasni esetleg converter osztály felismeri azt is hogy pontosan milyen adat érkezet és lekezelni

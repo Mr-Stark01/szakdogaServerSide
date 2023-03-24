@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -29,10 +30,11 @@ public class Server {
         //future2.isDone();
         try{
             Future<Integer> future = executor.submit(new GameClientHandler(players.get(0)));
-            //executor.submit(new GameClientHandler(players.get(1)));
-            future.isDone();
-        }catch (InterruptedException e){
-
+            //Future<Integer> future2 = executor.submit(new GameClientHandler(players.get(1)));
+            future.get();
+            System.out.println("over");
+        }catch (InterruptedException | ExecutionException e){
+            //TODO probably throw exception and that why it finishes
         }
 
         stop();

@@ -1,25 +1,90 @@
 package com.szakdogaServer.BusinessLogic;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import org.datatransferobject.UnitDTO;
 
 public class PathFinder {
-    public PathFinder(String path) throws ParserConfigurationException, IOException, SAXException, URISyntaxException {
-        File file = new File(path);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(file);
-        doc.getDocumentElement();
-        NodeList nl = doc.getElementsByTagName("map");
-        System.out.println(nl.item(0).getTextContent());
+    private TiledMapTileLayer tiledMapTileLayer;
+
+    public PathFinder() {
+        TmxMapLoader loader = new TmxMapLoader();
+        TiledMap map = loader.load("maps/defmap.tmx");
+        tiledMapTileLayer = (TiledMapTileLayer) map.getLayers().get(0);
+
+    }
+
+    public void checkNextStep(UnitDTO unit) {
+        int X = Math.round(unit.getX());
+        int Y = Math.round(unit.getY());
+        unit.setX(X);
+        unit.setY(Y);
+
+
+        if (tiledMapTileLayer.getCell(X, Y + 1).getTile().getProperties().containsKey("road") &&
+                !(unit.getPreviousX() == X && Y + 1 == unit.getPreviousY())) {
+            unit.setNextX(X);
+            unit.setNextY(Y + 1);
+            unit.setPreviousX(X);
+            unit.setPreviousY(Y);
+            return;//TODO végig irni
+        }
+        if (tiledMapTileLayer.getCell(X, Y - 1).getTile().getProperties().containsKey("road") &&
+                !(unit.getPreviousX() == X && Y - 1 == unit.getPreviousY())) {
+            unit.setNextX(X);
+            unit.setNextY(Y - 1);
+            unit.setPreviousX(X);
+            unit.setPreviousY(Y);
+            return;
+        }
+        if (tiledMapTileLayer.getCell(X + 1, Y + 1).getTile().getProperties().containsKey("road") &&
+                !(unit.getPreviousX() == X + 1 && Y + 1 == unit.getPreviousY())) {
+            unit.setNextX(X + 1);
+            unit.setNextY(Y + 1);
+            unit.setPreviousX(X);
+            unit.setPreviousY(Y);
+            return;
+        }
+        if (tiledMapTileLayer.getCell(X + 1, Y - 1).getTile().getProperties().containsKey("road") &&
+                !(unit.getPreviousX() == X + 1 && Y - 1 == unit.getPreviousY())) {
+            unit.setNextX(X + 1);
+            unit.setNextY(Y - 1);
+            unit.setPreviousX(X);
+            unit.setPreviousY(Y);
+            return;
+        }
+        if (tiledMapTileLayer.getCell(X + 1, Y).getTile().getProperties().containsKey("road") &&
+                !(unit.getPreviousX() == X + 1 && Y == unit.getPreviousY())) {
+            unit.setNextX(X + 1);
+            unit.setNextY(Y);
+            unit.setPreviousX(X);
+            unit.setPreviousY(Y);
+            return;
+        }
+        if (tiledMapTileLayer.getCell(X - 1, Y + 1).getTile().getProperties().containsKey("road") &&
+                !(unit.getPreviousX() == X - 1 && Y + 1 == unit.getPreviousY())) {
+            unit.setNextX(X - 1);
+            unit.setNextY(Y + 1);
+            unit.setPreviousX(X);
+            unit.setPreviousY(Y);
+            return;
+        }
+        if (tiledMapTileLayer.getCell(X - 1, Y - 1).getTile().getProperties().containsKey("road") &&
+                !(unit.getPreviousX() == X - 1 && Y - 1 == unit.getPreviousY())) {
+            unit.setNextX(X - 1);
+            unit.setNextY(Y - 1);
+            unit.setPreviousX(X);
+            unit.setPreviousY(Y);
+            return;
+        }
+        if (tiledMapTileLayer.getCell(X - 1, Y).getTile().getProperties().containsKey("road") &&
+                !(unit.getPreviousX() == X - 1 && Y == unit.getPreviousY())) {
+            unit.setNextX(X - 1);
+            unit.setNextY(Y);
+            unit.setPreviousX(X);
+            unit.setPreviousY(Y);
+            return;
+        }
     }
 }
