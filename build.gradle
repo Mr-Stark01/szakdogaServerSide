@@ -11,6 +11,10 @@ allprojects {
     }
 }
 
+configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor 5, 'minutes'
+}
+
 ext{
     gdxVersion = '1.11.0'
 }
