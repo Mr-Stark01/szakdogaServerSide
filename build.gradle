@@ -17,7 +17,7 @@ ext{
 
 dependencies {
 
-    implementation 'com.github.Mr-Stark01:DTO:2.0'
+    implementation 'com.github.Mr-Stark01:DTO:master-SNAPSHOT'
     "implementation"("com.badlogicgames.gdx:gdx-backend-lwjgl3:${gdxVersion}")
     "implementation"("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
     "implementation"("com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion")
