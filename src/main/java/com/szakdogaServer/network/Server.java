@@ -1,13 +1,13 @@
 package com.szakdogaServer.network;
 
+import com.szakdogaServer.BusinessLogic.ServerLogic;
+import org.datatransferobject.DTO;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class Server {
     private ServerSocket serverSocket;
@@ -16,6 +16,11 @@ public class Server {
 
     public void start(int port) throws IOException {
         serverSocket = new ServerSocket(port);
+        CountDownLatch countDownLatch = new CountDownLatch(2);
+        BlockingQueue<DTO> blockingQueueToLogicFromClients= new LinkedBlockingQueue<>(2);
+        BlockingQueue<ArrayList<DTO>> blockingQueueToClientsFromLogic= new LinkedBlockingQueue<>(2);
+        ServerLogic serverLogic = new ServerLogic(blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic);
+
 
         System.out.println(serverSocket.getLocalSocketAddress());
         players = new ArrayList<>();
@@ -29,7 +34,7 @@ public class Server {
         //future.isDone();
         //future2.isDone();
         try{
-            Future<Integer> future = executor.submit(new GameClientHandler(players.get(0)));
+            Future<Integer> future = executor.submit(new GameClientHandler(players.get(0),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
             //Future<Integer> future2 = executor.submit(new GameClientHandler(players.get(1)));
             future.get();
             System.out.println("over");
