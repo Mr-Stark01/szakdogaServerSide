@@ -14,6 +14,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
+import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
+
 public class GameClientHandler implements Callable<Integer> {//TODO tesztelés tényleges androidon futó alkalmazás nélkül setupolni valamit
     private final Socket clientSocket;
     private static ObjectOutputStream objectOutputStream;
@@ -22,6 +24,7 @@ public class GameClientHandler implements Callable<Integer> {//TODO tesztelés t
     private BlockingQueue<DTO>  blockingQueueOut;
     private BlockingQueue<ArrayList<DTO>> blockingQueueIn;
     private static ObjectInputStream objectInputStream;
+    private int id = getNewId();
     //TODO blocking quet olvasni csak és onnan sendData
     public GameClientHandler(Socket socket, BlockingQueue<DTO> blockingQueueOut,BlockingQueue<ArrayList<DTO>> blockingQueueIn) throws InterruptedException {
         this.clientSocket = socket;
@@ -52,6 +55,7 @@ public class GameClientHandler implements Callable<Integer> {//TODO tesztelés t
     }
     public void receiveData() throws IOException, ClassNotFoundException {//TODO csak deseralizal és berakja blocking queue ba
         DTO dto  = (DTO) objectInputStream.readObject(); //TODO csak adja ki a másik osztálynak + küllön szálra kiteni
+        dto.setId(id);
     }// TODO id alapján lehet kiolvasni esetleg converter osztály felismeri azt is hogy pontosan milyen adat érkezet és lekezelni
     public void sendData() throws IOException {//TODO csak seralizel és kiolvasa blocking queue ba
         try{
@@ -59,10 +63,16 @@ public class GameClientHandler implements Callable<Integer> {//TODO tesztelés t
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        for(DTO dto:DTOListOut){
-            objectOutputStream.writeObject(dto);
+        if(DTOListOut.get(0).getId()==id){
+            objectOutputStream.writeObject(DTOListOut.get(0));
+            objectOutputStream.writeObject(DTOListOut.get(1));
         }
-        DTOListOut=null;
+        else{
+            objectOutputStream.writeObject(DTOListOut.get(1));
+            objectOutputStream.writeObject(DTOListOut.get(0));
+
+        }
+        DTOListOut.clear();
         dto = null;
     }
 }

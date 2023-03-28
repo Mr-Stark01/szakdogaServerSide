@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 
+import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
+
 public class ServerLogic implements Runnable{
     private BlockingQueue<DTO> blockingQueueIn;
     private BlockingQueue<ArrayList<DTO>> blockingQueueOut;
@@ -28,8 +30,12 @@ public class ServerLogic implements Runnable{
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
             for(DTO dto:DTOList){
                 for(UnitDTO unitDTO:dto.getUnitDTOs()) {
+                    if(unitDTO.getId()==0){
+                        unitDTO.setId(getNewId());
+                    }
                     pathFinder.checkNextStep(unitDTO);
                 }
 

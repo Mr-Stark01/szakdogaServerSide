@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.MathUtils;
 import org.datatransferobject.UnitDTO;
 
 
-
 public class PathFinder {
     private TiledMapTileLayer tiledMapTileLayer;
 
@@ -34,8 +33,8 @@ public class PathFinder {
 
     private void calculateAngle(UnitDTO unit) {
         float angle = MathUtils.atan2( unit.getNextY() - unit.getY(), unit.getNextX() - unit.getX());
-        unit.setDeltaX = MathUtils.cos(angle);
-        unit.setDeltaY = MathUtils.sin(angle);
+        unit.setDeltaX(MathUtils.cos(angle));
+        unit.setDeltaY(MathUtils.sin(angle));
     }
 
     public void calculateNextStep(UnitDTO unit){
