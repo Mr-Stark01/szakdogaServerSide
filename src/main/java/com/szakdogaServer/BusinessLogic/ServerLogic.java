@@ -1,6 +1,7 @@
 package com.szakdogaServer.BusinessLogic;
 
 import org.datatransferobject.DTO;
+import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;
 
 import java.util.ArrayList;
@@ -38,8 +39,11 @@ public class ServerLogic implements Runnable{
                     }
                     pathFinder.checkNextStep(unitDTO);
                 }
-
+                for(TowerDTO towerDTO:dto.getTowerDTOs()){
+                    TowerAttack.attack(dto.getUnitDTOs(),towerDTO);//TODO currently using the same dto data not enemy data
+                }
             }
+            blockingQueueOut.add(DTOList);
             blockingQueueOut.add(DTOList);
             while(!blockingQueueOut.isEmpty()){
 
