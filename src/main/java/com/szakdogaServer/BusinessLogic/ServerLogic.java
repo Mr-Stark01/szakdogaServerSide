@@ -25,11 +25,12 @@ public class ServerLogic implements Runnable{
     @Override
     public void run() {
         while (true){
+            System.out.println("serverlogic loop");
             try {
                 DTOList.add(blockingQueueIn.take());
                 DTOList.add(blockingQueueIn.take());
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
 
             for(DTO dto:DTOList){
@@ -43,11 +44,19 @@ public class ServerLogic implements Runnable{
                     TowerAttack.attack(dto.getUnitDTOs(),towerDTO);//TODO currently using the same dto data not enemy data
                 }
             }
-            blockingQueueOut.add(DTOList);
-            blockingQueueOut.add(DTOList);
+            synchronized (blockingQueueOut) {
+                ArrayList<DTO> tmp  =new ArrayList<DTO>();
+                tmp.addAll(DTOList);
+                ArrayList<DTO> tmp2 =new ArrayList<DTO>();
+                tmp2.addAll(DTOList);
+                blockingQueueOut.offer(tmp);
+                blockingQueueOut.offer(tmp2);
+            }
             while(!blockingQueueOut.isEmpty()){
 
             }
+            System.out.println("Dtolist size:"+DTOList.size());
+            System.out.println("dtolistcleared");
             DTOList.clear();
         }
 

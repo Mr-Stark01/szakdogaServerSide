@@ -11,12 +11,15 @@ allprojects {
     }
 }
 
-configurations.all {
-    resolutionStrategy.cacheDynamicVersionsFor 5, 'minutes'
-}
+
 
 ext{
     gdxVersion = '1.11.0'
+}
+
+configurations.all {
+    resolutionStrategy.cacheDynamicVersionsFor 5, 'minutes'
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 dependencies {
@@ -26,6 +29,7 @@ dependencies {
     "implementation"("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
     "implementation"("com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion")
     "implementation"("com.badlogicgames.gdx:gdx:$gdxVersion")
+    implementation group: 'org.mockito', name: 'mockito-core', version: '5.2.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'

@@ -1,5 +1,7 @@
 package com.szakdogaServer.network;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.mock.graphics.MockGraphics;
 import com.szakdogaServer.BusinessLogic.ServerLogic;
 import org.datatransferobject.DTO;
 
@@ -15,6 +17,7 @@ public class Server {
     private ExecutorService executor = Executors.newFixedThreadPool(20);
 
     public void start(int port) throws IOException {
+
         serverSocket = new ServerSocket(port);
         CountDownLatch countDownLatch = new CountDownLatch(2);
         BlockingQueue<DTO> blockingQueueToLogicFromClients= new LinkedBlockingQueue<>(2);
@@ -24,8 +27,7 @@ public class Server {
 
         System.out.println(serverSocket.getLocalSocketAddress());
         players = new ArrayList<>();
-        while(players.size()<1){
-            System.out.println(players.size());
+        while(players.size()<2){
             players.add(serverSocket.accept());
         }
         System.out.println("Both player have connected.");
@@ -34,11 +36,14 @@ public class Server {
         //future.isDone();
         //future2.isDone();
         try{
+            executor.submit(serverLogic);
             Future<Integer> future = executor.submit(new GameClientHandler(players.get(0),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
-            //Future<Integer> future2 = executor.submit(new GameClientHandler(players.get(1)));
+            Future<Integer> future2 = executor.submit(new GameClientHandler(players.get(1),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
             future.get();
+            future2.get();
             System.out.println("over");
         }catch (InterruptedException | ExecutionException e){
+            e.printStackTrace();
             //TODO probably throw exception and that why it finishes
         }
 

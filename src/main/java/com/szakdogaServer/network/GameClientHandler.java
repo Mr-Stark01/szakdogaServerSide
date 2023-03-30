@@ -29,6 +29,7 @@ public class GameClientHandler implements Callable<Integer> {//TODO tesztelés t
     public GameClientHandler(Socket socket, BlockingQueue<DTO> blockingQueueOut,BlockingQueue<ArrayList<DTO>> blockingQueueIn) throws InterruptedException {
         this.clientSocket = socket;
         this.blockingQueueOut = blockingQueueOut;
+        this.blockingQueueIn=blockingQueueIn;
         try {
             objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());//Needs to be created first
             objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
@@ -41,28 +42,37 @@ public class GameClientHandler implements Callable<Integer> {//TODO tesztelés t
     public Integer call() {
         while(true){//TODO szétszedni kétfelé
             try {
+                System.out.println("here");
                 receiveData();
-                blockingQueueOut.add(dto);
+                blockingQueueOut.offer(dto);
+                System.out.println("here");
                 sendData();
             }
             catch (ClassNotFoundException e){
-                //e.printStackTrace();
+                e.printStackTrace();
+                //throw new RuntimeException("Game Client");
             }
-            catch (IOException e){
-                //e.printStackTrace();
+            catch (Exception e){
+                e.printStackTrace();
             }
         }
     }
     public void receiveData() throws IOException, ClassNotFoundException {//TODO csak deseralizal és berakja blocking queue ba
-        DTO dto  = (DTO) objectInputStream.readObject(); //TODO csak adja ki a másik osztálynak + küllön szálra kiteni
-        dto.setId(id);
+        synchronized (objectInputStream) {
+            dto = (DTO) objectInputStream.readObject();//TODO csak adja ki a másik osztálynak + küllön szálra kiteni
+        }
+        System.out.println("received data");
     }// TODO id alapján lehet kiolvasni esetleg converter osztály felismeri azt is hogy pontosan milyen adat érkezet és lekezelni
     public void sendData() throws IOException {//TODO csak seralizel és kiolvasa blocking queue ba
+        System.out.println("inside send data");
         try{
-            DTOListOut=blockingQueueIn.take();
+            DTOListOut=new ArrayList<>(blockingQueueIn.take());
+            System.out.println("Dtolistout size:"+DTOListOut.size());
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        System.out.println("Dtolistout size:"+DTOListOut.size());
+        System.out.println("inside send data after take");
         if(DTOListOut.get(0).getId()==id){
             objectOutputStream.writeObject(DTOListOut.get(0));
             objectOutputStream.writeObject(DTOListOut.get(1));
@@ -72,6 +82,7 @@ public class GameClientHandler implements Callable<Integer> {//TODO tesztelés t
             objectOutputStream.writeObject(DTOListOut.get(0));
 
         }
+        System.out.println("data sent");
         DTOListOut.clear();
         dto = null;
     }

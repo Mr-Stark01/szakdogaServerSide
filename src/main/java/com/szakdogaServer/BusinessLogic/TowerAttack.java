@@ -1,6 +1,5 @@
 package com.szakdogaServer.BusinessLogic;
 
-import com.badlogic.gdx.Gdx;
 import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;
 
@@ -14,13 +13,14 @@ public class TowerAttack {
         if(target==null){
             findTarget(units,towerDTO);
         }
+
         else if(target.getHealth() <=0){
             units.remove(towerDTO.getTarget());
             findTarget(units,towerDTO);
         }
         else if(
-                Math.sqrt((Math.pow(target.getX() - TowerDTO.getX(), 2)) +
-                        (Math.pow(target.getY() - TowerDTO.getY(), 2))) > towerDTO.getRange()){
+                Math.sqrt((Math.pow(target.getX() - towerDTO.getX(), 2)) +
+                        (Math.pow(target.getY() - towerDTO.getY(), 2))) > towerDTO.getRange()){
             findTarget(units,towerDTO);
         }
     }

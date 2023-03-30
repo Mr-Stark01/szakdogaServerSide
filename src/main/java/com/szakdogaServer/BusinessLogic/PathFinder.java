@@ -1,21 +1,31 @@
 package com.szakdogaServer.BusinessLogic;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.backends.headless.HeadlessApplication;
+import com.badlogic.gdx.backends.headless.HeadlessFileHandle;
+import com.badlogic.gdx.backends.headless.HeadlessFiles;
+import com.badlogic.gdx.backends.headless.HeadlessNativesLoader;
+import com.badlogic.gdx.backends.headless.mock.graphics.MockGraphics;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
 import org.datatransferobject.UnitDTO;
 
+import java.io.File;
+
 
 public class PathFinder {
     private TiledMapTileLayer tiledMapTileLayer;
 
     public PathFinder() {
-        TmxMapLoader loader = new TmxMapLoader();
-        TiledMap map = loader.load("maps/defmap.tmx");
-        tiledMapTileLayer = (TiledMapTileLayer) map.getLayers().get(0);
 
+        TmxMapLoader loader = new TmxMapLoader();
+        TiledMap map = loader.load("src/main/resources/maps/defmap.tmx");
+        tiledMapTileLayer = (TiledMapTileLayer) map.getLayers().get(0);
     }
 
     public void checkNextStep(UnitDTO unit) {
