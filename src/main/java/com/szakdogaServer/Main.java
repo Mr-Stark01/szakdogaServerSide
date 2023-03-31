@@ -7,6 +7,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessFiles;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGraphics;
 import com.badlogic.gdx.graphics.GL20;
+import com.szakdogaServer.BusinessLogic.PathFinder;
 import com.szakdogaServer.network.Server;
 import org.mockito.Mockito;
 import org.xml.sax.SAXException;
@@ -25,7 +26,8 @@ public class Main {
         Gdx.gl20 = Mockito.mock(GL20.class);
         Gdx.gl = Gdx.gl20;
         System.out.println(application.getFiles().getLocalStoragePath());
-        //PathFinder pathFinder = new PathFinder("src/main/resources/map.tmx");
+        /*PathFinder pathFinder = new PathFinder();
+        pathFinder.calculateNextStep(null);*/
         Server server = new Server();
         server.start(56227);
     }

@@ -41,7 +41,7 @@ public class PathFinder {
         }
     }
 
-    private void calculateAngle(UnitDTO unit) {
+    public void calculateAngle(UnitDTO unit) {
         float angle = MathUtils.atan2( unit.getNextY() - unit.getY(), unit.getNextX() - unit.getX());
         unit.setDeltaX(MathUtils.cos(angle));
         unit.setDeltaY(MathUtils.sin(angle));
@@ -50,7 +50,6 @@ public class PathFinder {
     public void calculateNextStep(UnitDTO unit){
         int X = Math.round(unit.getX());
         int Y = Math.round(unit.getY());
-
         if (tiledMapTileLayer.getCell(X, Y + 1).getTile().getProperties().containsKey("road") &&
                 !(unit.getPreviousX() == X && Y + 1 == unit.getPreviousY())) {
             unit.setNextX(X);

@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
 
 import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
 
-public class GameClientHandler implements Callable<Integer> {//TODO tesztelés tényleges androidon futó alkalmazás nélkül setupolni valamit
+public class GameClientHandler implements Runnable {//TODO tesztelés tényleges androidon futó alkalmazás nélkül setupolni valamit
     private final Socket clientSocket;
     private static ObjectOutputStream objectOutputStream;
     private DTO dto;
@@ -36,54 +36,60 @@ public class GameClientHandler implements Callable<Integer> {//TODO tesztelés t
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(objectOutputStream);
     }
 
     @Override
-    public Integer call() {
+    public void run() {
         while(true){//TODO szétszedni kétfelé
             try {
-                System.out.println("here");
+                System.out.println(id);
                 receiveData();
-                blockingQueueOut.offer(dto);
-                System.out.println("here");
+                System.out.println(clientSocket);
+                //blockingQueueOut.offer(dto);
                 sendData();
-            }
-            catch (ClassNotFoundException e){
-                e.printStackTrace();
-                //throw new RuntimeException("Game Client");
             }
             catch (Exception e){
                 e.printStackTrace();
             }
         }
     }
-    public void receiveData() throws IOException, ClassNotFoundException {//TODO csak deseralizal és berakja blocking queue ba
+    public void receiveData() {//TODO csak deseralizal és berakja blocking queue ba
         synchronized (objectInputStream) {
-            dto = (DTO) objectInputStream.readObject();//TODO csak adja ki a másik osztálynak + küllön szálra kiteni
-        }
-        System.out.println("received data");
+            try {
+                String asd = (String) objectInputStream.readObject();
+                System.out.println(asd);
+            }
+            catch (IOException | ClassNotFoundException e){
+                e.printStackTrace();
+            }
+
+        }//TODO csak adja ki a másik osztálynak + küllön szálra kiteni
     }// TODO id alapján lehet kiolvasni esetleg converter osztály felismeri azt is hogy pontosan milyen adat érkezet és lekezelni
     public void sendData() throws IOException {//TODO csak seralizel és kiolvasa blocking queue ba
-        System.out.println("inside send data");
-        try{
+        synchronized (objectOutputStream) {
+        /*try{
             DTOListOut=new ArrayList<>(blockingQueueIn.take());
-            System.out.println("Dtolistout size:"+DTOListOut.size());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("Dtolistout size:"+DTOListOut.size());
-        System.out.println("inside send data after take");
-        if(DTOListOut.get(0).getId()==id){
-            objectOutputStream.writeObject(DTOListOut.get(0));
-            objectOutputStream.writeObject(DTOListOut.get(1));
-        }
-        else{
-            objectOutputStream.writeObject(DTOListOut.get(1));
-            objectOutputStream.writeObject(DTOListOut.get(0));
+         */
+            //synchronized (DTOListOut) {
+            //if (DTOListOut.get(0).getId() == id) {
+            objectOutputStream.writeObject("asd");
+            objectOutputStream.flush();
+            objectOutputStream.writeObject("asd");
+            System.out.println("sent");
 
+            /*} else {
+                objectOutputStream.writeObject("asd");
+                objectOutputStream.writeObject("asd");
+            }*/
+            //}
+            objectOutputStream.flush();
+
+            DTOListOut.clear();
+            dto = null;
         }
-        System.out.println("data sent");
-        DTOListOut.clear();
-        dto = null;
     }
 }
