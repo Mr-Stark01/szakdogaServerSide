@@ -38,7 +38,7 @@ public class Server {
         //future.isDone();
         //future2.isDone();
         try{
-            //executor.submit(serverLogic);
+            executor.submit(serverLogic);
             executor.submit(new GameClientHandler(players.get(0),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
             executor.submit(new GameClientHandler(players.get(1),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
             Thread.sleep(200000);
