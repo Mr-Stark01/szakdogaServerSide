@@ -27,7 +27,7 @@ public class PathFinder {
     }
 
     public void checkNextStep(UnitDTO unit) {
-        if(unit.getLastStep() +((1/unit.getSpeed())*1000) > new Date().getTime()){ //TODO ha túll gyors vagy lassan fút a játék átugorhat pontot
+        if(unit.getLastStep() +((1000/unit.getSpeed())) > new Date().getTime()){ //TODO ha túll gyors vagy lassan fút a játék átugorhat pontot
             unit.getNextX().remove(0);
             unit.getNextY().remove(0);
             calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()),unit.getNextY().get(unit.getNextY().size()),unit.getNextX().get(unit.getNextX().size()-1), unit.getNextY().get(unit.getNextY().size()-1));

@@ -5,6 +5,7 @@ import org.datatransferobject.PlayerDTO;
 import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -34,6 +35,13 @@ public class ServerLogic implements Runnable{
                 e.printStackTrace();
             }
             for(DTO dto:DTOList){
+                DTO enemyDTO = null;
+                if(dto==DTOList.get(0)){
+                    enemyDTO = DTOList.get(1);
+                }
+                else{
+                    enemyDTO =DTOList.get(0);
+                }
                 for(UnitDTO unitDTO:dto.getUnitDTOs()) {
                     if(unitDTO.getId()==0){
                         unitDTO.setId(getNewId());
@@ -41,9 +49,10 @@ public class ServerLogic implements Runnable{
                         pathFinder.calculateAngle(unitDTO);
                     }
                     pathFinder.checkNextStep(unitDTO);
+                    //AbstractMap.SimpleEntry<Integer,Integer>simple = new AbstractMap.SimpleEntry<>(1,1);
                 }
                 for(TowerDTO towerDTO:dto.getTowerDTOs()){
-                    TowerAttack.attack(dto.getUnitDTOs(),towerDTO);//TODO currently using the same dto data not enemy data
+                    TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO);//TODO currently using the same dto data not enemy data
                 }
             }
             System.out.println("here3");
