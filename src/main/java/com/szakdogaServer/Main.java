@@ -7,6 +7,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessFiles;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGraphics;
 import com.badlogic.gdx.graphics.GL20;
+import com.szakdogaServer.BusinessLogic.IdCreator;
 import com.szakdogaServer.BusinessLogic.PathFinder;
 import com.szakdogaServer.network.Server;
 import org.mockito.Mockito;

@@ -39,11 +39,12 @@ public class Server {
         //future2.isDone();
         try{
             executor.submit(serverLogic);
-            executor.submit(new GameClientHandler(players.get(0),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
-            executor.submit(new GameClientHandler(players.get(1),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
-            Thread.sleep(200000);
+            Future f1=executor.submit(new GameClientHandler(players.get(0),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
+            Future f2=executor.submit(new GameClientHandler(players.get(1),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
+            f1.get();
+            f2.get();
             System.out.println("over");
-        }catch (InterruptedException e){
+        }catch (InterruptedException | ExecutionException e){
             e.printStackTrace();
             //TODO probably throw exception and that why it finishes
         }

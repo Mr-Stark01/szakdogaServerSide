@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
 
 import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
 
-public class GameClientHandler implements Runnable {//TODO tesztelés tényleges androidon futó alkalmazás nélkül setupolni valamit
+public class GameClientHandler implements Callable {//TODO tesztelés tényleges androidon futó alkalmazás nélkül setupolni valamit
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private DTO dto;
@@ -39,7 +39,7 @@ public class GameClientHandler implements Runnable {//TODO tesztelés tényleges
     }
 
     @Override
-    public void run() {
+    public Integer call() {
         while(true){//TODO szétszedni kétfelé
             try {
                 receiveData();

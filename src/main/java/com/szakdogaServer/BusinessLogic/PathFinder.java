@@ -20,9 +20,9 @@ public class PathFinder {
     }
     public void setupNextTiles(UnitDTO unit){
         calculateNextStep(unit,Math.round(unit.getX()),Math.round(unit.getY()),unit.getPreviousX(), unit.getPreviousY());
-        calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()),unit.getNextY().get(unit.getNextY().size()),unit.getPreviousX(), unit.getPreviousY());
+        calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1),unit.getPreviousX(), unit.getPreviousY());
         for(int i=0;i<4;i++){
-            calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()),unit.getNextY().get(unit.getNextY().size()),unit.getNextX().get(unit.getNextX().size()-1), unit.getNextY().get(unit.getNextY().size()-1));
+            calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1),unit.getNextX().get(unit.getNextX().size()-2), unit.getNextY().get(unit.getNextY().size()-2));
         }
     }
 
