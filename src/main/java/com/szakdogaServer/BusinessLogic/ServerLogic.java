@@ -27,7 +27,6 @@ public class ServerLogic implements Runnable{
     @Override
     public void run() {
         while (true){
-            System.out.println("here");
             try {
                 DTOList.add(blockingQueueIn.take());
                 DTOList.add(blockingQueueIn.take());
@@ -52,15 +51,17 @@ public class ServerLogic implements Runnable{
                     //AbstractMap.SimpleEntry<Integer,Integer>simple = new AbstractMap.SimpleEntry<>(1,1);
                 }
                 for(TowerDTO towerDTO:dto.getTowerDTOs()){
+                    if(towerDTO.getId()==0){
+                        towerDTO.setId(getNewId());
+                    }
                     TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO);//TODO currently using the same dto data not enemy data
                 }
+                System.out.println("asd4");
             }
-            System.out.println("here3");
             synchronized (blockingQueueOut) {
                 blockingQueueOut.offer(deepCopy(DTOList));
                 blockingQueueOut.offer(deepCopy(DTOList));
             }
-            System.out.println("here4");
             while(!blockingQueueOut.isEmpty()){
 
             }
@@ -116,7 +117,9 @@ public class ServerLogic implements Runnable{
                                 unit.getId(),
                                 unit.getNextX(),
                                 unit.getNextY()),
-                        tower.getAttackTime()));
+                        tower.getAttackTime(),
+                        tower.getDeltaSum(),
+                        tower.getId()));
             }
             PlayerDTO player= dto.getPlayerDTO();
             PlayerDTO playerCopy =new PlayerDTO(player.getMoney(),

@@ -27,16 +27,21 @@ public class PathFinder {
     }
 
     public void checkNextStep(UnitDTO unit) {
+        if(unit.getNextX().size()<6) {
+            calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()-1), unit.getNextY().get(unit.getNextY().size()-1), unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
+        }
         if(unit.getLastStep() +((1000/unit.getSpeed())) > new Date().getTime()){ //TODO ha túll gyors vagy lassan fút a játék átugorhat pontot
             unit.getNextX().remove(0);
             unit.getNextY().remove(0);
-            calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()),unit.getNextY().get(unit.getNextY().size()),unit.getNextX().get(unit.getNextX().size()-1), unit.getNextY().get(unit.getNextY().size()-1));
+            calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()) - 1, unit.getNextY().get(unit.getNextY().size()) - 1, unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
             unit.setLastStep(new Date().getTime());
         }
         else{
             if(Math.sqrt((Math.pow(unit.getX()-unit.getNextX().get(0),2))+(Math.pow(unit.getY()-unit.getNextY().get(0),2))) > 1.51f){
                 unit.setX(unit.getNextX().get(0));
                 unit.setY(unit.getNextY().get(0));
+                calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()), unit.getNextY().get(unit.getNextY().size()), unit.getNextX().get(unit.getNextX().size() - 1), unit.getNextY().get(unit.getNextY().size() - 1));
+                unit.setLastStep(new Date().getTime());
             }
         }
     }
