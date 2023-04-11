@@ -1,5 +1,6 @@
 package com.szakdogaServer.network;
 
+import com.badlogic.gdx.Gdx;
 import com.szakdogaServer.BusinessLogic.ServerLogic;
 import org.datatransferobject.DTO;
 

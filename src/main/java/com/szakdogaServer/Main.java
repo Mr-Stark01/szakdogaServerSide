@@ -31,5 +31,6 @@ public class Main {
         pathFinder.calculateNextStep(null);*/
         Server server = new Server();
         server.start(56227);
+        Gdx.app.exit();
     }
 }

@@ -42,58 +42,42 @@ public class GameClientHandler implements Callable {//TODO tesztelés tényleges
     @Override
     public Integer call() {
         while(true){//TODO szétszedni kétfelé
-
+            try {
                 receiveData();
-            System.out.println("received");
+                System.out.println("received");
                 blockingQueueOut.offer(dto);
                 sendData();
-            System.out.println("snet");
+                System.out.println("snet");
+            }
+            catch (InterruptedException | IOException | ClassNotFoundException e){
+                e.printStackTrace();
+                return 1;
+            }
         }
     }
-    public void receiveData() {//TODO csak deseralizal és berakja blocking queue ba
-        try {
-            try {
-                //clientSocket.setSoTimeout(1000);
-                dto = (DTO) objectInputStream.readObject();
-                dto.setId(id);
-            }
-            catch (SocketException e){
-                e.printStackTrace();
-
-            }
-        }
-        catch (IOException | ClassNotFoundException e){
-            e.printStackTrace();
-        }
+    public void receiveData() throws IOException, ClassNotFoundException {//TODO csak deseralizal és berakja blocking queue ba
+        dto = (DTO) objectInputStream.readObject();
+        dto.setId(id);
 
     }//TODO csak adja ki a másik osztálynak + küllön szálra kiteni
 // TODO id alapján lehet kiolvasni esetleg converter osztály felismeri azt is hogy pontosan milyen adat érkezet és lekezelni
-    public void sendData() {//TODO csak seralizel és kiolvasa blocking queue ba
-        try{
-            DTOListOut=blockingQueueIn.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void sendData() throws InterruptedException, IOException {//TODO csak seralizel és kiolvasa blocking queue ba
+        DTOListOut=blockingQueueIn.take();
+        if (DTOListOut.get(0).getId() == id) {
+            ArrayList<DTO> tmp = new ArrayList<>();
+            tmp.add(DTOListOut.get(0));
+            tmp.add(DTOListOut.get(1));
+            objectOutputStream.writeObject(tmp);
+            objectOutputStream.flush();
+        } else {
+            ArrayList<DTO> tmp = new ArrayList<>();
+            tmp.add(DTOListOut.get(1));
+            tmp.add(DTOListOut.get(0));
+            objectOutputStream.writeObject(tmp);
+            objectOutputStream.flush();
         }
-        try {
-            if (DTOListOut.get(0).getId() == id) {
-                ArrayList<DTO> tmp = new ArrayList<>();
-                tmp.add(DTOListOut.get(0));
-                tmp.add(DTOListOut.get(1));
-                objectOutputStream.writeObject(tmp);
-                objectOutputStream.flush();
-            } else {
-                ArrayList<DTO> tmp = new ArrayList<>();
-                tmp.add(DTOListOut.get(1));
-                tmp.add(DTOListOut.get(0));
-                objectOutputStream.writeObject(tmp);
-                objectOutputStream.flush();
-            }
-            objectOutputStream.reset();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-
+        objectOutputStream.reset();
+        System.out.println("asd7");
         DTOListOut.clear();
         dto = null;
     }

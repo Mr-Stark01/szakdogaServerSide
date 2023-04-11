@@ -59,12 +59,17 @@ public class ServerLogic implements Runnable{
                 System.out.println("asd4");
             }
             synchronized (blockingQueueOut) {
+                System.out.println("asd4.5");
+                System.out.println(blockingQueueOut.isEmpty());
                 blockingQueueOut.offer(deepCopy(DTOList));
+                System.out.println("asd4.8");
                 blockingQueueOut.offer(deepCopy(DTOList));
             }
+            System.out.println("asd5");
             while(!blockingQueueOut.isEmpty()){
 
             }
+            System.out.println("asd6");
             DTOList.clear();
         }
 
@@ -74,6 +79,7 @@ public class ServerLogic implements Runnable{
         DTOList.add(dto);
     }
     public ArrayList<DTO> deepCopy(ArrayList<DTO> DTOList){
+        System.out.println("deepcopy");
         ArrayList<DTO> copy= new ArrayList<>();
         for(DTO dto:DTOList){
             ArrayList<UnitDTO> unitCopy = new ArrayList<>();
@@ -96,30 +102,43 @@ public class ServerLogic implements Runnable{
                         unit.getNextY()));
             }
             ArrayList<TowerDTO> towerCopy = new ArrayList<>();
-            for(TowerDTO tower:dto.getTowerDTOs()){
-                UnitDTO unit=tower.getTarget();
-                towerCopy.add(new TowerDTO(tower.getDamage(),
-                        tower.getPrice(),
-                        tower.getRange(),
-                        new UnitDTO(
-                                unit.getSpeed(),
-                                unit.getHealth(),
-                                unit.getDamage(),
-                                unit.getPrice(),
-                                unit.getPreviousX(),
-                                unit.getPreviousY(),
-                                unit.getDeltaX(),
-                                unit.getDeltaY(),
-                                unit.getDistance(),
-                                unit.getX(),
-                                unit.getY(),
-                                unit.getUnitClass(),
-                                unit.getId(),
-                                unit.getNextX(),
-                                unit.getNextY()),
-                        tower.getAttackTime(),
-                        tower.getDeltaSum(),
-                        tower.getId()));
+            for(TowerDTO tower:dto.getTowerDTOs()) {
+                if (tower.getTarget() != null) {
+                    UnitDTO unit = tower.getTarget();
+                    towerCopy.add(new TowerDTO(tower.getDamage(),
+                            tower.getPrice(),
+                            tower.getRange(),
+                            new UnitDTO(
+                                    unit.getSpeed(),
+                                    unit.getHealth(),
+                                    unit.getDamage(),
+                                    unit.getPrice(),
+                                    unit.getPreviousX(),
+                                    unit.getPreviousY(),
+                                    unit.getDeltaX(),
+                                    unit.getDeltaY(),
+                                    unit.getDistance(),
+                                    unit.getX(),
+                                    unit.getY(),
+                                    unit.getUnitClass(),
+                                    unit.getId(),
+                                    unit.getNextX(),
+                                    unit.getNextY()),
+                            tower.getAttackTime(),
+                            tower.getDeltaSum(),
+                            tower.getId(),
+                            tower.getTowerClass()));
+                }
+                else{
+                    towerCopy.add(new TowerDTO(tower.getDamage(),
+                            tower.getPrice(),
+                            tower.getRange(),
+                            null,
+                            tower.getAttackTime(),
+                            tower.getDeltaSum(),
+                            tower.getId(),
+                            tower.getTowerClass()));
+                }
             }
             PlayerDTO player= dto.getPlayerDTO();
             PlayerDTO playerCopy =new PlayerDTO(player.getMoney(),
@@ -128,6 +147,7 @@ public class ServerLogic implements Runnable{
                     player.getHealth());
             copy.add(new DTO(unitCopy,towerCopy,playerCopy,dto.getId()));
         }
+        System.out.println("deepcopy2");
         return copy;
     }
 }
