@@ -17,7 +17,7 @@ ext{
     gdxVersion = '1.11.0'
 }
 
-configurations.all {
+configurations.configureEach {
     resolutionStrategy.cacheDynamicVersionsFor 5, 'minutes'
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
@@ -27,6 +27,7 @@ dependencies {
     implementation ('com.github.Mr-Stark01:DTO:master-SNAPSHOT') {
         changing = true
     }
+    implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.41.2.1'
     "implementation"("com.badlogicgames.gdx:gdx-backend-lwjgl3:${gdxVersion}")
     "implementation"("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
     "implementation"("com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion")

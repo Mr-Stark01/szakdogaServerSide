@@ -108,7 +108,11 @@ public class PathFinder {
             unit.getNextX().add(X - 1);
             unit.getNextY().add(Y - 1);
             setPreviousCoordinates(X,Y,unit);
+            return;
         }
+        System.out.println("baddddddddddddd");
+        unit.getNextX().add(-1);
+        unit.getNextY().add(-1);
     }
     private void setPreviousCoordinates(int X,int Y,UnitDTO unit){
         unit.setPreviousX(X);

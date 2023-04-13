@@ -105,7 +105,10 @@ public class ServerLogic implements Runnable{
             for(TowerDTO tower:dto.getTowerDTOs()) {
                 if (tower.getTarget() != null) {
                     UnitDTO unit = tower.getTarget();
-                    towerCopy.add(new TowerDTO(tower.getDamage(),
+                    towerCopy.add(new TowerDTO(
+                            tower.getX(),
+                            tower.getY(),
+                            tower.getDamage(),
                             tower.getPrice(),
                             tower.getRange(),
                             new UnitDTO(
@@ -130,7 +133,10 @@ public class ServerLogic implements Runnable{
                             tower.getTowerClass()));
                 }
                 else{
-                    towerCopy.add(new TowerDTO(tower.getDamage(),
+                    towerCopy.add(new TowerDTO(
+                            tower.getX(),
+                            tower.getY(),
+                            tower.getDamage(),
                             tower.getPrice(),
                             tower.getRange(),
                             null,

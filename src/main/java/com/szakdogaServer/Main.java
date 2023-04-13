@@ -9,6 +9,7 @@ import com.badlogic.gdx.backends.headless.mock.graphics.MockGraphics;
 import com.badlogic.gdx.graphics.GL20;
 import com.szakdogaServer.BusinessLogic.IdCreator;
 import com.szakdogaServer.BusinessLogic.PathFinder;
+import com.szakdogaServer.DataBase.DB;
 import com.szakdogaServer.network.Server;
 import org.mockito.Mockito;
 import org.xml.sax.SAXException;
@@ -29,8 +30,9 @@ public class Main {
         System.out.println(application.getFiles().getLocalStoragePath());
         /*PathFinder pathFinder = new PathFinder();
         pathFinder.calculateNextStep(null);*/
-        Server server = new Server();
+
+        /*Server server = new Server();
         server.start(56227);
-        Gdx.app.exit();
+        Gdx.app.exit();*/
     }
 }
