@@ -49,6 +49,7 @@ public class ServerLogic implements Runnable{
                     }
                     pathFinder.checkNextStep(unitDTO);
                     //AbstractMap.SimpleEntry<Integer,Integer>simple = new AbstractMap.SimpleEntry<>(1,1);
+                    attackBase(unitDTO,dto.getPlayerDTO());
                 }
                 for(TowerDTO towerDTO:dto.getTowerDTOs()){
                     if(towerDTO.getId()==0){
@@ -73,6 +74,13 @@ public class ServerLogic implements Runnable{
             DTOList.clear();
         }
 
+    }
+
+    private void attackBase(UnitDTO unitDTO, PlayerDTO playerDTO) {
+        if(unitDTO.getNextX().get(0)==-1 && unitDTO.getNextY().get(0)==-1){
+            playerDTO.setHealth(playerDTO.getHealth()-unitDTO.getDamage());
+            unitDTO.setId(-1);
+        }
     }
 
     public void setPlayerDTO(DTO dto) {
