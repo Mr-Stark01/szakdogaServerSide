@@ -17,9 +17,38 @@ public class DB {
             System.out.println(e.getMessage());
         }
     }
-    public void test(){
+
+    public int getPlayerPositionX(int playerCount) {
+        String prep = "SELECT X FROM MAPINFO WHERE PLAYER = ?";
         try {
-            String prepTest = "INSERT INTO PLAYER(name,points,wins,losses) values(?,?,?,?)";
+            PreparedStatement preparedStatement = conn.prepareStatement(prep);
+            preparedStatement.setInt(1,playerCount);
+            ResultSet resultSet=preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("X");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public int getPlayerPositionY(int playerCount) {
+        String prep = "SELECT Y FROM MAPINFO WHERE PLAYER = ?"; //TODO this table doesn't exist
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(prep);
+            preparedStatement.setInt(1,playerCount);
+            ResultSet resultSet=preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Y");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    private void test(){
+        try {
+            String prepTest = "INSERT INTO PLAYER(name,points,wins,losses) values(?,?,?,?);";
             PreparedStatement preparedStatement = conn.prepareStatement(prepTest);
             preparedStatement.setString(1, "testS");
             preparedStatement.setFloat(2, 21.23f);

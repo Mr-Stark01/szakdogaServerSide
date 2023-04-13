@@ -1,5 +1,6 @@
 package com.szakdogaServer.BusinessLogic;
 
+import com.szakdogaServer.DataBase.DB;
 import org.datatransferobject.DTO;
 import org.datatransferobject.PlayerDTO;
 import org.datatransferobject.TowerDTO;
@@ -18,6 +19,7 @@ public class ServerLogic implements Runnable{
     private BlockingQueue<ArrayList<DTO>> blockingQueueOut;
     private PathFinder pathFinder;
     private ArrayList<DTO> DTOList = new ArrayList<>();
+    private DB db = new DB();
     public ServerLogic(BlockingQueue<DTO> blockingQueueIn,BlockingQueue<ArrayList<DTO>> blockingQueueOut){
         this.blockingQueueIn=blockingQueueIn;
         this.blockingQueueOut=blockingQueueOut;
@@ -33,7 +35,12 @@ public class ServerLogic implements Runnable{
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            int playerCount=1;
             for(DTO dto:DTOList){
+                if(dto.getPlayerDTO().getPositionX()==-1){
+                    dto.getPlayerDTO().setPositionX(db.getPlayerPositionX(playerCount));
+                    dto.getPlayerDTO().setPositionY(db.getPlayerPositionY(playerCount));
+                }
                 DTO enemyDTO = null;
                 if(dto==DTOList.get(0)){
                     enemyDTO = DTOList.get(1);
