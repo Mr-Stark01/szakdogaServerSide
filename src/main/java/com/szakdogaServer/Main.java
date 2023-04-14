@@ -31,8 +31,8 @@ public class Main {
         /*PathFinder pathFinder = new PathFinder();
         pathFinder.calculateNextStep(null);*/
 
-        /*Server server = new Server();
+        Server server = new Server();
         server.start(56227);
-        Gdx.app.exit();*/
+        Gdx.app.exit();
     }
 }

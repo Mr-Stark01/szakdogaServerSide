@@ -27,7 +27,7 @@ public class TowerAttack {
         System.out.println("asd2");
     }
     public static void attack(List<UnitDTO> units,TowerDTO towerDTO){
-        if(new Date().getTime()-towerDTO.getLastTimeOfAttack() > towerDTO.getAttackTime()){
+        if(new Date().getTime()-towerDTO.getLastTimeOfAttack() > towerDTO.getAttackTime() && towerDTO.getId() != -1){
             checkIfEnemyStillInRangeAndAllive(units,towerDTO);
             if(towerDTO.getTarget()!=null){
                 getTarget(units,towerDTO).setHealth(towerDTO.getTarget().getHealth()-towerDTO.getDamage());

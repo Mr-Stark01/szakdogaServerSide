@@ -50,9 +50,15 @@ public class ServerLogic implements Runnable{
                 }
                 for(UnitDTO unitDTO:dto.getUnitDTOs()) {
                     if(unitDTO.getId()==0){
-                        unitDTO.setId(getNewId());
-                        pathFinder.setupNextTiles(unitDTO);
-                        pathFinder.calculateAngle(unitDTO);
+                        if(dto.getPlayerDTO().getMoney()-unitDTO.getPrice()<0){
+                            unitDTO.setId(-1);
+                        }
+                        else {
+                            dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-unitDTO.getPrice());
+                            unitDTO.setId(getNewId());
+                            pathFinder.setupNextTiles(unitDTO);
+                            pathFinder.calculateAngle(unitDTO);
+                        }
                     }
                     pathFinder.checkNextStep(unitDTO);
                     //AbstractMap.SimpleEntry<Integer,Integer>simple = new AbstractMap.SimpleEntry<>(1,1);
@@ -60,7 +66,14 @@ public class ServerLogic implements Runnable{
                 }
                 for(TowerDTO towerDTO:dto.getTowerDTOs()){
                     if(towerDTO.getId()==0){
-                        towerDTO.setId(getNewId());
+                        if(dto.getPlayerDTO().getMoney()-towerDTO.getPrice()<0){
+                            towerDTO.setId(-1);
+                        }
+                        else {
+                            dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-towerDTO.getPrice());
+                            towerDTO.setId(getNewId());
+                            System.out.println("coordinates"+towerDTO.getX()+"\t"+towerDTO.getY());
+                        }
                     }
                     TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO);//TODO currently using the same dto data not enemy data
                 }
