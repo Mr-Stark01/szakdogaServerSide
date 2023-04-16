@@ -38,8 +38,11 @@ public class ServerLogic implements Runnable{
             int playerCount=1;
             for(DTO dto:DTOList){
                 if(dto.getPlayerDTO().getPositionX()==-1){
+                    System.out.println("dbX:"+db.getPlayerPositionX(playerCount));
+                    System.out.println("dbY:"+db.getPlayerPositionX(playerCount));
                     dto.getPlayerDTO().setPositionX(db.getPlayerPositionX(playerCount));
                     dto.getPlayerDTO().setPositionY(db.getPlayerPositionY(playerCount));
+                    playerCount++;
                 }
                 DTO enemyDTO = null;
                 if(dto==DTOList.get(0)){

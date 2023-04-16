@@ -53,6 +53,18 @@ public class PathFinder {
     }
 
     public void calculateNextStep(UnitDTO unit,int X,int Y,int previousX,int previousY){
+        /*for(int i=-1;i<=1;i++){
+            for(int j=-1;j<=1;j++){
+                if (tiledMapTileLayer.getCell(X + i, Y + j).getTile().getProperties().containsKey("road") &&
+                        !(previousX == X + i && Y + j == previousY)) {
+                    unit.getNextX().add(X + i);
+                    unit.getNextY().add(Y + j);
+                    setPreviousCoordinates(X,Y,unit);
+                    return;
+                }
+            }
+        }*/
+        System.out.println("cords"+X+"\t"+Y);
         if (tiledMapTileLayer.getCell(X, Y + 1).getTile().getProperties().containsKey("road") &&
                 !(previousX == X && Y + 1 == previousY)) {
             unit.getNextX().add(X);
