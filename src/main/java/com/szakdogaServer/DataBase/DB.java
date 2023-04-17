@@ -8,7 +8,7 @@ public class DB {
     public DB() {
         try {
             // db parameters
-            String url = "jdbc:sqlite:C:/Users/gydan/Desktop/szakdoga everything/szakdogaServer/src/main/resources/db/game.db";
+            String url = "jdbc:sqlite:src/main/resources/db/game.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             conn.setAutoCommit(true);
@@ -32,6 +32,11 @@ public class DB {
         return -1;
     }
 
+    /**
+     *
+     * @param playerCount indexing start from 1
+     * @return
+     */
     public int getPlayerPositionY(int playerCount) {
         String prep = "SELECT Y FROM MAPINFO WHERE PLAYER = ?"; //TODO this table doesn't exist
         try {
