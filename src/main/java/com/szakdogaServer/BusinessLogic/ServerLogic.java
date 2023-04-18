@@ -63,9 +63,12 @@ public class ServerLogic implements Runnable{
                             pathFinder.calculateAngle(unitDTO);
                         }
                     }
-                    pathFinder.checkNextStep(unitDTO);
-                    //AbstractMap.SimpleEntry<Integer,Integer>simple = new AbstractMap.SimpleEntry<>(1,1);
-                    attackBase(unitDTO,dto.getPlayerDTO());
+                    if(unitDTO.getId()!=-1 && !unitDTO.getNextX().contains(-1)) {
+                        pathFinder.checkNextStep(unitDTO);
+                    }
+                        //AbstractMap.SimpleEntry<Integer,Integer>simple = new AbstractMap.SimpleEntry<>(1,1);
+                    attackBase(unitDTO, enemyDTO.getPlayerDTO());
+
                 }
                 for(TowerDTO towerDTO:dto.getTowerDTOs()){
                     if(towerDTO.getId()==0){
@@ -81,6 +84,12 @@ public class ServerLogic implements Runnable{
                     TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO);//TODO currently using the same dto data not enemy data
                 }
                 System.out.println("asd4");
+                if(dto.getPlayerDTO().getHealth()<=0){
+                    System.out.println("should end");
+                    dto.setId(-3);//-3 loss
+                    enemyDTO.setId(-4);//-4 win
+                    break;
+                }
             }
             synchronized (blockingQueueOut) {
                 System.out.println("asd4.5");

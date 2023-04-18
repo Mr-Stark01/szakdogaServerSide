@@ -29,17 +29,44 @@ public class PathFinderTest {
     public void CorrectStartingTileInDB(){
         UnitDTO unitDTO = new UnitDTO(0,0,0,0,db.getPlayerPositionX(1),db.getPlayerPositionY(1),0,0,0,db.getPlayerPositionX(1),db.getPlayerPositionY(1),"asd",0,new ArrayList<Integer>(),new ArrayList<Integer>());
         pathFinder.setupNextTiles(unitDTO);
-        Assertions.assertEquals(unitDTO.getNextX().size(),unitDTO.getNextX().size());
-        Assertions.assertEquals(unitDTO.getNextX().size(),5);
+        Assertions.assertEquals(6,unitDTO.getNextX().size());
+        Assertions.assertEquals(6,unitDTO.getNextY().size());
     }
     @Test
     public void CorrectCoordinatesWithNoMoreDistanceThan2(){
         UnitDTO unitDTO = new UnitDTO(0,0,0,0,db.getPlayerPositionX(1),db.getPlayerPositionY(1),0,0,0,db.getPlayerPositionX(1),db.getPlayerPositionY(1),"asd",0,new ArrayList<Integer>(),new ArrayList<Integer>());
         pathFinder.setupNextTiles(unitDTO);
-        while(unitDTO.getNextX().size()>0) {
-            Assertions.assertTrue(Math.sqrt((Math.pow(unitDTO.getX() - unitDTO.getNextX().get(0), 2)) + (Math.pow(unitDTO.getY() - unitDTO.getNextY().get(0), 2))) > 1.51f);
-            unitDTO.setX(unitDTO.getNextX().remove(0));
-            unitDTO.setY(unitDTO.getNextY().remove(0));
-        }
+        Assertions.assertTrue(Math.sqrt((Math.pow(unitDTO.getX() - unitDTO.getNextX().get(0), 2)) + (Math.pow(unitDTO.getY() - unitDTO.getNextY().get(0), 2))) < 1.51f);
+        unitDTO.setX(unitDTO.getNextX().remove(0));
+        unitDTO.setY(unitDTO.getNextY().remove(0));
+        Assertions.assertTrue(Math.sqrt((Math.pow(unitDTO.getX() - unitDTO.getNextX().get(0), 2)) + (Math.pow(unitDTO.getY() - unitDTO.getNextY().get(0), 2))) < 1.51f);
+        unitDTO.setX(unitDTO.getNextX().remove(0));
+        unitDTO.setY(unitDTO.getNextY().remove(0));
+        Assertions.assertTrue(Math.sqrt((Math.pow(unitDTO.getX() - unitDTO.getNextX().get(0), 2)) + (Math.pow(unitDTO.getY() - unitDTO.getNextY().get(0), 2))) < 1.51f);
+        unitDTO.setX(unitDTO.getNextX().remove(0));
+        unitDTO.setY(unitDTO.getNextY().remove(0));
+        Assertions.assertTrue(Math.sqrt((Math.pow(unitDTO.getX() - unitDTO.getNextX().get(0), 2)) + (Math.pow(unitDTO.getY() - unitDTO.getNextY().get(0), 2))) < 1.51f);
+        unitDTO.setX(unitDTO.getNextX().remove(0));
+        unitDTO.setY(unitDTO.getNextY().remove(0));
+        Assertions.assertTrue(Math.sqrt((Math.pow(unitDTO.getX() - unitDTO.getNextX().get(0), 2)) + (Math.pow(unitDTO.getY() - unitDTO.getNextY().get(0), 2))) < 1.51f);
+        unitDTO.setX(unitDTO.getNextX().remove(0));
+        unitDTO.setY(unitDTO.getNextY().remove(0));
+        Assertions.assertTrue(Math.sqrt((Math.pow(unitDTO.getX() - unitDTO.getNextX().get(0), 2)) + (Math.pow(unitDTO.getY() - unitDTO.getNextY().get(0), 2))) < 1.51f);
+        unitDTO.setX(unitDTO.getNextX().remove(0));
+        unitDTO.setY(unitDTO.getNextY().remove(0));
+        Assertions.assertEquals(unitDTO.getNextX().size(),0);
+        Assertions.assertEquals(unitDTO.getNextY().size(),0);
+    }
+    @Test
+    public void calculatingCorrectAngelBetweenTwoPoints(){
+        UnitDTO unitDTO = new UnitDTO(0,0,0,0,db.getPlayerPositionX(1),db.getPlayerPositionY(1),0,0,0,db.getPlayerPositionX(1),db.getPlayerPositionY(1),"asd",0,new ArrayList<Integer>(),new ArrayList<Integer>());
+        pathFinder.setupNextTiles(unitDTO);
+        pathFinder.calculateAngle(unitDTO);
+        Assertions.assertEquals(0.707,unitDTO.getDeltaX(),2);
+        Assertions.assertEquals(-0.707,unitDTO.getDeltaY(),2);
+        unitDTO.setX(unitDTO.getNextX().remove(0));
+        unitDTO.setY(unitDTO.getNextY().remove(0));
+        Assertions.assertEquals(0.707,unitDTO.getDeltaX(),2);
+        Assertions.assertEquals(-0.707,unitDTO.getDeltaY(),2);
     }
 }
