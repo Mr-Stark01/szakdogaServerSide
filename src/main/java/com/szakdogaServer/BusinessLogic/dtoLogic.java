@@ -51,16 +51,28 @@ public class dtoLogic {
             unitDTO.setLastStep(new Date().getTime());
         }
     }
-    public void checkIfPlayerCanCreateTower(DTO dto,TowerDTO towerDTO){
+    public void checkIfPlayerCanCreateTower(DTO dto,DTO enemyDTO,TowerDTO towerDTO){
         if(towerDTO.getId()==0){
             if(dto.getPlayerDTO().getMoney()-towerDTO.getPrice()<0){
                 towerDTO.setId(-1);
+                return;
             }
-            else {
-                dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-towerDTO.getPrice());
-                towerDTO.setId(getNewId());
-                System.out.println("coordinates"+towerDTO.getX()+"\t"+towerDTO.getY());
+            for(TowerDTO towerDTO1:dto.getTowerDTOs()){
+                if(towerDTO != towerDTO1 && towerDTO.getX()==towerDTO1.getX() && towerDTO.getY()==towerDTO1.getY()){
+                    towerDTO.setId(-1);
+                    return;
+                }
             }
+            for(TowerDTO towerDTO1:enemyDTO.getTowerDTOs()){
+                if( towerDTO != towerDTO1 && towerDTO.getX()==towerDTO1.getX() && towerDTO.getY()==towerDTO1.getY()){
+                    towerDTO.setId(-1);
+                    return;
+                }
+            }
+            dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-towerDTO.getPrice());
+            towerDTO.setId(getNewId());
+            System.out.println("coordinates"+towerDTO.getX()+"\t"+towerDTO.getY());
+
         }
     }
 }

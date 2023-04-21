@@ -56,7 +56,7 @@ public class ServerLogic implements Runnable{
                 }
                 logger.info("Units step has been made");
                 for(TowerDTO towerDTO:dto.getTowerDTOs()){
-                    dtoLogic.checkIfPlayerCanCreateTower(dto,towerDTO);
+                    dtoLogic.checkIfPlayerCanCreateTower(dto,enemyDTO,towerDTO);
                     dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()+TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO));
                 }
                 logger.info("Towers attacked");
