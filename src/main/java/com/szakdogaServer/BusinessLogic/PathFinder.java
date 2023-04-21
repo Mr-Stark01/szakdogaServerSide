@@ -24,26 +24,59 @@ public class PathFinder {
         for(int i=0;i<4;i++){
             calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1),unit.getNextX().get(unit.getNextX().size()-2), unit.getNextY().get(unit.getNextY().size()-2));
         }
+        unit.setLastStep(new Date().getTime());
     }
 
     public void checkNextStep(UnitDTO unit) {
-        if(unit.getNextX().size()<6) {
+        System.out.println("Enters checkNextStep");
+        if(unit.getNextX().size()<6 || unit.getNextY().size() < 6) {
+            System.out.println("Calculate next step if less than 6");
             calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()-1), unit.getNextY().get(unit.getNextY().size()-1), unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
         }
-        if(unit.getLastStep() +((1000/unit.getSpeed())) > new Date().getTime()){ //TODO ha túll gyors vagy lassan fút a játék átugorhat pontot
-            unit.getNextX().remove(0);
-            unit.getNextY().remove(0);
-            calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()) - 1, unit.getNextY().get(unit.getNextY().size()) - 1, unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
+            //1000 + 500 <= 2000
+        if(unit.getLastStep() + ((int)(1000/unit.getSpeed())) <= new Date().getTime()){ //TODO ha túll gyors vagy lassan fút a játék átugorhat pontot
+            System.out.println("Calculate next step and removes if according to timer already should be past it");
+            System.out.println((unit.getLastStep()+(1000/unit.getSpeed())));
+            System.out.println((1000/unit.getSpeed()));
+            System.out.println(new Date().getTime());
+            int X=unit.getNextX().remove(0);
+            System.out.println("remvoeX"+X);
+            //unit.setX(X);
+            System.out.println("setx"+X);
+            int Y=unit.getNextY().remove(0);
+            System.out.println("remvoeY"+Y);
+            //unit.setY(Y);
+            System.out.println("setY");
+
+
+            System.out.println(unit.getNextX().get(unit.getNextX().size()- 1));
+            System.out.println(unit.getNextY().get(unit.getNextY().size()- 1));
+            System.out.println(unit.getNextX().get(unit.getNextX().size()- 2));
+            System.out.println(unit.getNextY().get(unit.getNextY().size()- 2));
+            calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size() - 1) , unit.getNextY().get(unit.getNextY().size()- 1 ) ,
+                    unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
             unit.setLastStep(new Date().getTime());
         }
         else{
-            if(Math.sqrt((Math.pow(unit.getX()-unit.getNextX().get(0),2))+(Math.pow(unit.getY()-unit.getNextY().get(0),2))) > 1.51f){
-                unit.setX(unit.getNextX().get(0));
-                unit.setY(unit.getNextY().get(0));
-                calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()), unit.getNextY().get(unit.getNextY().size()), unit.getNextX().get(unit.getNextX().size() - 1), unit.getNextY().get(unit.getNextY().size() - 1));
+            if(Math.sqrt((Math.pow(unit.getX()-unit.getNextX().get(0),2))+(Math.pow(unit.getY()-unit.getNextY().get(0),2))) > 2f){
+                System.out.println("Force");
+                System.out.println(Math.sqrt((Math.pow(unit.getX()-unit.getNextX().get(0),2))+(Math.pow(unit.getY()-unit.getNextY().get(0),2))));
+                System.out.println("X:"+unit.getX());
+                System.out.println("xNEXT:"+unit.getNextX().get(0));
+                System.out.println("Y:"+unit.getY());
+                System.out.println("YNEXT:"+unit.getNextY().get(0));
+
+
+                unit.setX(unit.getNextX().remove(0));
+                unit.setY(unit.getNextY().remove(0));
+                System.out.println("removes and reset position");
+                calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size() - 1) , unit.getNextY().get(unit.getNextY().size()- 1 ) ,
+                        unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
                 unit.setLastStep(new Date().getTime());
+                System.out.println("leaves force");
             }
         }
+        System.out.println("Exit checkNextStep");
     }
 
     public void calculateAngle(UnitDTO unit) {

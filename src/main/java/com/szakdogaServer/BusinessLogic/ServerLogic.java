@@ -1,18 +1,17 @@
 package com.szakdogaServer.BusinessLogic;
 
 import com.szakdogaServer.DataBase.DB;
+import com.szakdogaServer.network.Server;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;
 import org.datatransferobject.PlayerDTO;
 import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-
-import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
+import java.util.concurrent.TimeUnit;
 
 public class ServerLogic implements Runnable{
     private BlockingQueue<DTO> blockingQueueIn;
@@ -20,104 +19,84 @@ public class ServerLogic implements Runnable{
     private PathFinder pathFinder;
     private ArrayList<DTO> DTOList = new ArrayList<>();
     private DB db = new DB();
+    private Logger logger;
+    private dtoLogic dtoLogic;
     public ServerLogic(BlockingQueue<DTO> blockingQueueIn,BlockingQueue<ArrayList<DTO>> blockingQueueOut){
         this.blockingQueueIn=blockingQueueIn;
         this.blockingQueueOut=blockingQueueOut;
         pathFinder = new PathFinder();
+        logger = LogManager.getLogger(ServerLogic.class);
+        dtoLogic=new dtoLogic(pathFinder);
     }
 
     @Override
     public void run() {
         while (true){
             try {
-                DTOList.add(blockingQueueIn.take());
-                DTOList.add(blockingQueueIn.take());
+                DTOList.add(blockingQueueIn.poll(10, TimeUnit.SECONDS));
+                DTOList.add(blockingQueueIn.poll(10, TimeUnit.SECONDS));
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("BlockingQueue thrown InteruptedException.Since only server should be capable of starting a shutdown this shouldn't happen");
+                logger.trace(e.getMessage());
             }
-            int playerCount=1;
             for(DTO dto:DTOList){
-                if(dto.getPlayerDTO().getPositionX()==-1){
-                    System.out.println("dbX:"+db.getPlayerPositionX(playerCount));
-                    System.out.println("dbY:"+db.getPlayerPositionX(playerCount));
-                    dto.getPlayerDTO().setPositionX(db.getPlayerPositionX(playerCount));
-                    dto.getPlayerDTO().setPositionY(db.getPlayerPositionY(playerCount));
-                    playerCount++;
-                }
+                dtoLogic.checkIfDTOHasCorrectPossition(dto,db);
                 DTO enemyDTO = null;
                 if(dto==DTOList.get(0)){
                     enemyDTO = DTOList.get(1);
                 }
                 else{
-                    enemyDTO =DTOList.get(0);
+                    enemyDTO = DTOList.get(0);
                 }
+                logger.info("Players stats checked");
                 for(UnitDTO unitDTO:dto.getUnitDTOs()) {
-                    if(unitDTO.getId()==0){
-                        if(dto.getPlayerDTO().getMoney()-unitDTO.getPrice()<0){
-                            unitDTO.setId(-1);
-                        }
-                        else {
-                            dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-unitDTO.getPrice());
-                            unitDTO.setId(getNewId());
-                            pathFinder.setupNextTiles(unitDTO);
-                            pathFinder.calculateAngle(unitDTO);
-                        }
-                    }
-                    if(unitDTO.getId()!=-1 && !unitDTO.getNextX().contains(-1)) {
-                        pathFinder.checkNextStep(unitDTO);
-                    }
-                        //AbstractMap.SimpleEntry<Integer,Integer>simple = new AbstractMap.SimpleEntry<>(1,1);
+                    dtoLogic.setupNewUnits(dto,unitDTO);
                     attackBase(unitDTO, enemyDTO.getPlayerDTO());
-
+                    dtoLogic.step(unitDTO);
                 }
+                logger.info("Units step has been made");
                 for(TowerDTO towerDTO:dto.getTowerDTOs()){
-                    if(towerDTO.getId()==0){
-                        if(dto.getPlayerDTO().getMoney()-towerDTO.getPrice()<0){
-                            towerDTO.setId(-1);
-                        }
-                        else {
-                            dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-towerDTO.getPrice());
-                            towerDTO.setId(getNewId());
-                            System.out.println("coordinates"+towerDTO.getX()+"\t"+towerDTO.getY());
-                        }
-                    }
-                    TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO);//TODO currently using the same dto data not enemy data
+                    dtoLogic.checkIfPlayerCanCreateTower(dto,towerDTO);
+                    dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()+TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO));
                 }
-                System.out.println("asd4");
+                logger.info("Towers attacked");
                 if(dto.getPlayerDTO().getHealth()<=0){
-                    System.out.println("should end");
+                    logger.info("Game finished one player reached 0 health");
                     dto.setId(-3);//-3 loss
                     enemyDTO.setId(-4);//-4 win
                     break;
                 }
             }
             synchronized (blockingQueueOut) {
-                System.out.println("asd4.5");
                 System.out.println(blockingQueueOut.isEmpty());
                 blockingQueueOut.offer(deepCopy(DTOList));
-                System.out.println("asd4.8");
                 blockingQueueOut.offer(deepCopy(DTOList));
             }
-            System.out.println("asd5");
             while(!blockingQueueOut.isEmpty()){
 
             }
-            System.out.println("asd6");
             DTOList.clear();
         }
 
     }
 
+    /**
+     * Checks if unit can attack enemy base
+     * @param unitDTO
+     * @param playerDTO
+     */
     private void attackBase(UnitDTO unitDTO, PlayerDTO playerDTO) {
-        if(unitDTO.getNextX().get(0)==-1 && unitDTO.getNextY().get(0)==-1){
+        if(unitDTO.getNextX().size()==1 && unitDTO.getNextX().get(0)==-1 && unitDTO.getNextY().get(0)==-1){
             playerDTO.setHealth(playerDTO.getHealth()-unitDTO.getDamage());
             unitDTO.setId(-1);
         }
     }
 
-    public void setPlayerDTO(DTO dto) {
-        DTOList.add(dto);
-    }
+    /**
+     * Creates a copy of DTOList with new memory.
+     * @param DTOList
+     * @return
+     */
     public ArrayList<DTO> deepCopy(ArrayList<DTO> DTOList){
         System.out.println("deepcopy");
         ArrayList<DTO> copy= new ArrayList<>();
@@ -139,7 +118,8 @@ public class ServerLogic implements Runnable{
                         unit.getUnitClass(),
                         unit.getId(),
                         unit.getNextX(),
-                        unit.getNextY()));
+                        unit.getNextY(),
+                        unit.getLastStep()));
             }
             ArrayList<TowerDTO> towerCopy = new ArrayList<>();
             for(TowerDTO tower:dto.getTowerDTOs()) {
@@ -166,7 +146,8 @@ public class ServerLogic implements Runnable{
                                     unit.getUnitClass(),
                                     unit.getId(),
                                     unit.getNextX(),
-                                    unit.getNextY()),
+                                    unit.getNextY(),
+                                    unit.getLastStep()),
                             tower.getAttackTime(),
                             tower.getDeltaSum(),
                             tower.getId(),
@@ -193,7 +174,6 @@ public class ServerLogic implements Runnable{
                     player.getHealth());
             copy.add(new DTO(unitCopy,towerCopy,playerCopy,dto.getId()));
         }
-        System.out.println("deepcopy2");
         return copy;
     }
 }

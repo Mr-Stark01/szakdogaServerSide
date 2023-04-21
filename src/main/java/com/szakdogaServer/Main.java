@@ -6,26 +6,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.graphics.GL20;
 import com.szakdogaServer.network.Server;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.mockito.Mockito;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.net.URISyntaxException;
+
 
 
 public class Main {
     private static Application application;
-    public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+    public static void main(String[] args) throws IOException {
         // Mocking up a headless graphics side
+        Logger logger = LogManager.getLogger(Main.class);
         application = new HeadlessApplication(new ApplicationAdapter() {
         });
+        logger.info("Headless Application setup");
         Gdx.gl20 = Mockito.mock(GL20.class);
         Gdx.gl = Gdx.gl20;
-        System.out.println(application.getFiles().getLocalStoragePath());
-        /*PathFinder pathFinder = new PathFinder();
-        pathFinder.calculateNextStep(null);*/
-
+        logger.info("Necesarry graphical elements succesfully mocked");
         Server server = new Server();
         server.start(56227);
         Gdx.app.exit();

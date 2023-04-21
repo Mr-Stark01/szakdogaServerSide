@@ -1,6 +1,8 @@
 package com.szakdogaServer.network;
 
 import com.szakdogaServer.BusinessLogic.ServerLogic;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;
 
 import java.io.IOException;
@@ -17,7 +19,7 @@ import java.util.concurrent.Future;
 
 import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
 
-public class GameClientHandler implements Callable {//TODO tesztelés tényleges androidon futó alkalmazás nélkül setupolni valamit
+public class GameClientHandler implements Callable {
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private DTO dto;
@@ -26,42 +28,44 @@ public class GameClientHandler implements Callable {//TODO tesztelés tényleges
     private BlockingQueue<ArrayList<DTO>> blockingQueueIn;
     private ObjectInputStream objectInputStream;
     private int id = getNewId();
-    //TODO blocking quet olvasni csak és onnan sendData
+    private Logger logger;
     public GameClientHandler(Socket socket, BlockingQueue<DTO> blockingQueueOut,BlockingQueue<ArrayList<DTO>> blockingQueueIn) throws InterruptedException {
         this.clientSocket = socket;
         this.blockingQueueOut = blockingQueueOut;
         this.blockingQueueIn=blockingQueueIn;
+        logger = LogManager.getLogger(GameClientHandler.class);
         try {
             objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());//Needs to be created first
             objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Creating Streams for the clientSocket throws error probably closed connection");
+            logger.trace(e.getMessage());
         }
     }
 
     @Override
     public Integer call() {
-        while(true){//TODO szétszedni kétfelé
+        while(true){
             try {
+                logger.info("Awaiting to received data");
                 receiveData();
-                System.out.println("received");
+                logger.info("Data received");
                 blockingQueueOut.offer(dto);
                 sendData();
-                System.out.println("snet");
+                logger.info("Data sent");
             }
             catch (InterruptedException | IOException | ClassNotFoundException e){
-                e.printStackTrace();
-                return 1;
+                logger.trace(e.getMessage());
+                return -1;
             }
         }
     }
-    public void receiveData() throws IOException, ClassNotFoundException {//TODO csak deseralizal és berakja blocking queue ba
+    public void receiveData() throws IOException, ClassNotFoundException {
         dto = (DTO) objectInputStream.readObject();
         dto.setId(id);
 
-    }//TODO csak adja ki a másik osztálynak + küllön szálra kiteni
-// TODO id alapján lehet kiolvasni esetleg converter osztály felismeri azt is hogy pontosan milyen adat érkezet és lekezelni
-    public void sendData() throws InterruptedException, IOException {//TODO csak seralizel és kiolvasa blocking queue ba
+    }
+    public void sendData() throws InterruptedException, IOException {
         DTOListOut=blockingQueueIn.take();
         if (DTOListOut.get(0).getId() == id) {
             ArrayList<DTO> tmp = new ArrayList<>();
@@ -76,8 +80,7 @@ public class GameClientHandler implements Callable {//TODO tesztelés tényleges
             objectOutputStream.writeObject(tmp);
             objectOutputStream.flush();
         }
-        objectOutputStream.reset();
-        System.out.println("asd7");
+        objectOutputStream.flush();
         DTOListOut.clear();
         dto = null;
     }
