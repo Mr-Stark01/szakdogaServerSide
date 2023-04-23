@@ -2,9 +2,13 @@
 <Configuration status="warn">
     <Properties>
         <Property name="basePath">src/main/resources/logs</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
     </Properties>
 
     <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" >
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
         <RollingFile name="fileLogger"
                      fileName="${basePath}/app.log"
                      filePattern="${basePath}/app-%d{yyyy-MM-dd}.log">
@@ -52,9 +56,12 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <root additivity="false" level="info">
-            <appender-ref ref="fileLogger" />
+        <root additivity="false" level="debug">
+            <appender-ref ref="debugLog" />
         </root>
+        <Logger name="info" additivity="false" level="info">
+            <appender-ref ref="fileLogger" />
+        </Logger>
         <Logger name="debug" additivity="false" level="debug">
             <appender-ref ref="debugLog" />
         </Logger>

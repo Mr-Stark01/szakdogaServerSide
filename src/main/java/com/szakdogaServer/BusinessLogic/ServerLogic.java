@@ -1,7 +1,6 @@
 package com.szakdogaServer.BusinessLogic;
 
 import com.szakdogaServer.DataBase.DB;
-import com.szakdogaServer.network.Server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;
@@ -20,13 +19,13 @@ public class ServerLogic implements Runnable{
     private ArrayList<DTO> DTOList = new ArrayList<>();
     private DB db = new DB();
     private Logger logger;
-    private dtoLogic dtoLogic;
+    private DTOLogic dtoLogic;
     public ServerLogic(BlockingQueue<DTO> blockingQueueIn,BlockingQueue<ArrayList<DTO>> blockingQueueOut){
         this.blockingQueueIn=blockingQueueIn;
         this.blockingQueueOut=blockingQueueOut;
         pathFinder = new PathFinder();
         logger = LogManager.getLogger(ServerLogic.class);
-        dtoLogic=new dtoLogic(pathFinder);
+        dtoLogic=new DTOLogic(pathFinder);
     }
 
     @Override
@@ -64,11 +63,12 @@ public class ServerLogic implements Runnable{
                     logger.info("Game finished one player reached 0 health");
                     dto.setId(-3);//-3 loss
                     enemyDTO.setId(-4);//-4 win
+                    db.addNameToDb(dto.getName(),dto.getPlayerDTO().getMoney(),0,1);
+                    db.addNameToDb(enemyDTO.getName(),enemyDTO.getPlayerDTO().getMoney(),1,0);
                     break;
                 }
             }
             synchronized (blockingQueueOut) {
-                System.out.println(blockingQueueOut.isEmpty());
                 blockingQueueOut.offer(deepCopy(DTOList));
                 blockingQueueOut.offer(deepCopy(DTOList));
             }
@@ -98,7 +98,6 @@ public class ServerLogic implements Runnable{
      * @return
      */
     public ArrayList<DTO> deepCopy(ArrayList<DTO> DTOList){
-        System.out.println("deepcopy");
         ArrayList<DTO> copy= new ArrayList<>();
         for(DTO dto:DTOList){
             ArrayList<UnitDTO> unitCopy = new ArrayList<>();

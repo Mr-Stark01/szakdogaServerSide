@@ -57,7 +57,8 @@ public class Server {
         }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occured on one of the threads");
+            logger.trace(e.getMessage());
         }
         finally {
             stop();

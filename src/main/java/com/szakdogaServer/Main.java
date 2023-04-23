@@ -19,6 +19,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         // Mocking up a headless graphics side
         Logger logger = LogManager.getLogger(Main.class);
+        logger.debug("pls work");
         application = new HeadlessApplication(new ApplicationAdapter() {
         });
         logger.info("Headless Application setup");

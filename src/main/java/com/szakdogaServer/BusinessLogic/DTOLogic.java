@@ -12,10 +12,10 @@ import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
 /**
  * This class facilitates everything that only requires 1 dto and not both.
  */
-public class dtoLogic {
+public class DTOLogic {
     int playerCount=1;
     PathFinder pathFinder;
-    public dtoLogic(PathFinder pathFinder){
+    public DTOLogic(PathFinder pathFinder){
         this.pathFinder=pathFinder;
 
     }
@@ -24,7 +24,6 @@ public class dtoLogic {
             dto.getPlayerDTO().setPositionX(db.getPlayerPositionX(playerCount));
             dto.getPlayerDTO().setPositionY(db.getPlayerPositionY(playerCount));
             playerCount++;
-            System.out.println(dto.getPlayerDTO().getPositionX());
         }
         playerCount=playerCount>2?1:2;
     }
@@ -71,8 +70,6 @@ public class dtoLogic {
             }
             dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-towerDTO.getPrice());
             towerDTO.setId(getNewId());
-            System.out.println("coordinates"+towerDTO.getX()+"\t"+towerDTO.getY());
-
         }
     }
 }

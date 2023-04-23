@@ -10,7 +10,6 @@ import java.util.List;
 public class TowerAttack {
 
     public static void checkIfEnemyStillInRangeAndAllive(List<UnitDTO> units,TowerDTO towerDTO){//What a beauty
-        System.out.println("asd1");
         UnitDTO target =towerDTO.getTarget();
         if(target==null){
             findTarget(units,towerDTO);
@@ -24,7 +23,6 @@ public class TowerAttack {
                         (Math.pow(target.getY() - towerDTO.getY(), 2))) > towerDTO.getRange()){
             findTarget(units,towerDTO);
         }
-        System.out.println("asd2");
     }
     public static int attack(List<UnitDTO> units,TowerDTO towerDTO){
         if(new Date().getTime()-towerDTO.getLastTimeOfAttack() > towerDTO.getAttackTime() && towerDTO.getId() != -1){

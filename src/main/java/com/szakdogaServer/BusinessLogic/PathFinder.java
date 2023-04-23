@@ -4,6 +4,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.MathUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.datatransferobject.UnitDTO;
 
 import java.util.Date;
@@ -11,72 +13,62 @@ import java.util.Date;
 
 public class PathFinder {
     private TiledMapTileLayer tiledMapTileLayer;
+    private Logger logger;
 
     public PathFinder() {
-
+        logger = LogManager.getLogger(PathFinder.class);
         TmxMapLoader loader = new TmxMapLoader();
         TiledMap map = loader.load("src/main/resources/maps/defmap.tmx");
         tiledMapTileLayer = (TiledMapTileLayer) map.getLayers().get(0);
     }
+
+    /**
+     * sets up at least the next 6 steps for lag comp reasons
+     * @param unit
+     */
     public void setupNextTiles(UnitDTO unit){
+        logger.info("setuping up new unit");
         calculateNextStep(unit,Math.round(unit.getX()),Math.round(unit.getY()),unit.getPreviousX(), unit.getPreviousY());
         calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1),unit.getPreviousX(), unit.getPreviousY());
         for(int i=0;i<4;i++){
             calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1),unit.getNextX().get(unit.getNextX().size()-2), unit.getNextY().get(unit.getNextY().size()-2));
         }
         unit.setLastStep(new Date().getTime());
+        logger.info("unit setup with atleast 6 steps");
     }
 
+    /**
+     * Moves the unit from a logical side and forces it if necesarry into new position
+     * @param unit
+     */
     public void checkNextStep(UnitDTO unit) {
-        System.out.println("Enters checkNextStep");
         if(unit.getNextX().size()<6 || unit.getNextY().size() < 6) {
-            System.out.println("Calculate next step if less than 6");
+            logger.info("Less than 6 steps remaning.");
             calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()-1), unit.getNextY().get(unit.getNextY().size()-1), unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
         }
-            //1000 + 500 <= 2000
-        if(unit.getLastStep() + ((int)(1000/unit.getSpeed())) <= new Date().getTime()){ //TODO ha túll gyors vagy lassan fút a játék átugorhat pontot
-            System.out.println("Calculate next step and removes if according to timer already should be past it");
-            System.out.println((unit.getLastStep()+(1000/unit.getSpeed())));
-            System.out.println((1000/unit.getSpeed()));
-            System.out.println(new Date().getTime());
+        float distance = (float) Math.sqrt((Math.pow(unit.getPreviousX()-unit.getNextX().get(0),2))+(Math.pow(unit.getPreviousY()-unit.getNextY().get(0),2)));
+        if((unit.getLastStep() + (long)(((1000/unit.getSpeed()))*distance)) <= new Date().getTime()){ //The conversion is necesary otherwise it's treated as string which is bad
+            logger.info("The unit traveled for the alocated time on this tile");
             int X=unit.getNextX().remove(0);
-            System.out.println("remvoeX"+X);
-            //unit.setX(X);
-            System.out.println("setx"+X);
             int Y=unit.getNextY().remove(0);
-            System.out.println("remvoeY"+Y);
-            //unit.setY(Y);
-            System.out.println("setY");
-
-
-            System.out.println(unit.getNextX().get(unit.getNextX().size()- 1));
-            System.out.println(unit.getNextY().get(unit.getNextY().size()- 1));
-            System.out.println(unit.getNextX().get(unit.getNextX().size()- 2));
-            System.out.println(unit.getNextY().get(unit.getNextY().size()- 2));
+            unit.setX(X);
+            unit.setY(Y);
+            setPreviousCoordinates(X,Y,unit);
             calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size() - 1) , unit.getNextY().get(unit.getNextY().size()- 1 ) ,
                     unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
             unit.setLastStep(new Date().getTime());
         }
         else{
-            if(Math.sqrt((Math.pow(unit.getX()-unit.getNextX().get(0),2))+(Math.pow(unit.getY()-unit.getNextY().get(0),2))) > 2f){
-                System.out.println("Force");
-                System.out.println(Math.sqrt((Math.pow(unit.getX()-unit.getNextX().get(0),2))+(Math.pow(unit.getY()-unit.getNextY().get(0),2))));
-                System.out.println("X:"+unit.getX());
-                System.out.println("xNEXT:"+unit.getNextX().get(0));
-                System.out.println("Y:"+unit.getY());
-                System.out.println("YNEXT:"+unit.getNextY().get(0));
-
-
+            if(Math.sqrt((Math.pow(unit.getX()-unit.getNextX().get(0),2))+(Math.pow(unit.getY()-unit.getNextY().get(0),2))) > 1.51f){
+                logger.info("The unit strayed too far away from the roda forcefully move it back and steps it forward");
                 unit.setX(unit.getNextX().remove(0));
                 unit.setY(unit.getNextY().remove(0));
-                System.out.println("removes and reset position");
+                setPreviousCoordinates((int) unit.getX(), (int) unit.getY(),unit);
                 calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size() - 1) , unit.getNextY().get(unit.getNextY().size()- 1 ) ,
                         unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
                 unit.setLastStep(new Date().getTime());
-                System.out.println("leaves force");
             }
         }
-        System.out.println("Exit checkNextStep");
     }
 
     public void calculateAngle(UnitDTO unit) {
@@ -97,47 +89,46 @@ public class PathFinder {
                 }
             }
         }*/
-        System.out.println("cords"+X+"\t"+Y);
         if (tiledMapTileLayer.getCell(X, Y + 1).getTile().getProperties().containsKey("road") &&
                 !(previousX == X && Y + 1 == previousY)) {
             unit.getNextX().add(X);
             unit.getNextY().add(Y + 1);
-            setPreviousCoordinates(X,Y,unit);
+           
             return;
         }
         if (tiledMapTileLayer.getCell(X, Y - 1).getTile().getProperties().containsKey("road") &&
                 !(previousX == X && Y - 1 == previousY)) {
             unit.getNextX().add(X);
             unit.getNextY().add(Y - 1);
-            setPreviousCoordinates(X,Y,unit);
+           
             return;
         }
         if (tiledMapTileLayer.getCell(X - 1, Y).getTile().getProperties().containsKey("road") &&
                 !(previousX == X - 1 && Y == previousY)) {
             unit.getNextX().add(X - 1);
             unit.getNextY().add(Y);
-            setPreviousCoordinates(X,Y,unit);
+           
             return;
         }
         if (tiledMapTileLayer.getCell(X + 1, Y).getTile().getProperties().containsKey("road") &&
                 !(previousX == X + 1 && Y == previousY)) {
             unit.getNextX().add(X + 1);
             unit.getNextY().add(Y);
-            setPreviousCoordinates(X,Y,unit);
+           
             return;
         }
         if (tiledMapTileLayer.getCell(X + 1, Y + 1).getTile().getProperties().containsKey("road") &&
                 !(previousX == X + 1 && Y + 1 == previousY)) {
             unit.getNextX().add(X + 1);
             unit.getNextY().add(Y + 1);
-            setPreviousCoordinates(X,Y,unit);
+           
             return;
         }
         if (tiledMapTileLayer.getCell(X + 1, Y - 1).getTile().getProperties().containsKey("road") &&
                 !(previousX == X + 1 && Y - 1 == previousY)) {
             unit.getNextX().add(X + 1);
             unit.getNextY().add(Y - 1);
-            setPreviousCoordinates(X,Y,unit);
+           
             return;
         }
 
@@ -145,17 +136,16 @@ public class PathFinder {
                 !(previousX == X - 1 && Y + 1 == previousY)) {
             unit.getNextX().add(X - 1);
             unit.getNextY().add(Y + 1);
-            setPreviousCoordinates(X,Y,unit);
+           
             return;
         }
         if (tiledMapTileLayer.getCell(X - 1, Y - 1).getTile().getProperties().containsKey("road") &&
                 !(previousX == X - 1 && Y - 1 == previousY)) {
             unit.getNextX().add(X - 1);
             unit.getNextY().add(Y - 1);
-            setPreviousCoordinates(X,Y,unit);
+           
             return;
         }
-        System.out.println("baddddddddddddd");
         unit.getNextX().add(-1);
         unit.getNextY().add(-1);
     }
