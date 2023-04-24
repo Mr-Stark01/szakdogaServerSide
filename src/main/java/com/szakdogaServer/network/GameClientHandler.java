@@ -1,6 +1,7 @@
 package com.szakdogaServer.network;
 
 import com.szakdogaServer.BusinessLogic.ServerLogic;
+import com.szakdogaServer.DataBase.DB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;
@@ -13,9 +14,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
 
@@ -27,9 +26,12 @@ public class GameClientHandler implements Callable {
     private BlockingQueue<DTO>  blockingQueueOut;
     private BlockingQueue<ArrayList<DTO>> blockingQueueIn;
     private ObjectInputStream objectInputStream;
-    private int id = getNewId();
+    private final int id = getNewId();
     private Logger logger;
-    public GameClientHandler(Socket socket, BlockingQueue<DTO> blockingQueueOut,BlockingQueue<ArrayList<DTO>> blockingQueueIn) throws InterruptedException {
+    private boolean setup=true;
+    private CyclicBarrier barrier;
+    public GameClientHandler(Socket socket, BlockingQueue<DTO> blockingQueueOut, BlockingQueue<ArrayList<DTO>> blockingQueueIn, CyclicBarrier barrier) throws InterruptedException {
+        this.barrier=barrier;
         this.clientSocket = socket;
         this.blockingQueueOut = blockingQueueOut;
         this.blockingQueueIn=blockingQueueIn;
@@ -49,31 +51,48 @@ public class GameClientHandler implements Callable {
             try {
                 logger.info("Awaiting to received data");
                 receiveData();
+                barrier.await();
                 logger.info("Data received");
                 blockingQueueOut.offer(dto);
+                System.out.println("after blocking");
                 sendData();
+                barrier.await();
+                System.out.println("data sent");
                 logger.info("Data sent");
+
             }
             catch (InterruptedException | IOException | ClassNotFoundException e){
+                e.printStackTrace();
+                logger.trace(e.getMessage());
+                return -1;
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
                 logger.trace(e.getMessage());
                 return -1;
             }
         }
     }
     public void receiveData() throws IOException, ClassNotFoundException {
+        logger.debug("waiting for message");
         dto = (DTO) objectInputStream.readObject();
-        dto.setId(id);
-
+        System.out.println(" receive id + id"+id+"\t"+ dto.getId()+"\t"+Thread.currentThread().getId());
+        if(setup){
+            dto.setId(id);
+            setup=false;
+        }
+        logger.debug("message received");
     }
     public void sendData() throws InterruptedException, IOException {
         DTOListOut=blockingQueueIn.take();
         if (DTOListOut.get(0).getId() == id) {
+            System.out.println("send 0 id + id"+id+"\t"+ DTOListOut.get(0).getId()+"\t"+Thread.currentThread().getId());
             ArrayList<DTO> tmp = new ArrayList<>();
             tmp.add(DTOListOut.get(0));
             tmp.add(DTOListOut.get(1));
             objectOutputStream.writeObject(tmp);
             objectOutputStream.flush();
         } else {
+            System.out.println("send 1 id + id"+id+"\t"+ DTOListOut.get(1).getId()+"\t"+Thread.currentThread().getId());
             ArrayList<DTO> tmp = new ArrayList<>();
             tmp.add(DTOListOut.get(1));
             tmp.add(DTOListOut.get(0));

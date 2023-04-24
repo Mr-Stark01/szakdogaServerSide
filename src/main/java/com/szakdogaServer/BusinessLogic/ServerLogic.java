@@ -17,23 +17,29 @@ public class ServerLogic implements Runnable{
     private BlockingQueue<ArrayList<DTO>> blockingQueueOut;
     private PathFinder pathFinder;
     private ArrayList<DTO> DTOList = new ArrayList<>();
-    private DB db = new DB();
+    private DB db ;
     private Logger logger;
     private DTOLogic dtoLogic;
-    public ServerLogic(BlockingQueue<DTO> blockingQueueIn,BlockingQueue<ArrayList<DTO>> blockingQueueOut){
+    public ServerLogic(BlockingQueue<DTO> blockingQueueIn,BlockingQueue<ArrayList<DTO>> blockingQueueOut,DB db){
         this.blockingQueueIn=blockingQueueIn;
         this.blockingQueueOut=blockingQueueOut;
+
         pathFinder = new PathFinder();
         logger = LogManager.getLogger(ServerLogic.class);
         dtoLogic=new DTOLogic(pathFinder);
+        this.db=db;
     }
 
     @Override
     public void run() {
         while (true){
             try {
-                DTOList.add(blockingQueueIn.poll(10, TimeUnit.SECONDS));
-                DTOList.add(blockingQueueIn.poll(10, TimeUnit.SECONDS));
+                System.out.println("blocking b4");
+                DTOList.add(blockingQueueIn.take());
+                System.out.println("blocking durring");
+                DTOList.add(blockingQueueIn.take());
+                System.out.println("blocking after");
+                blockingQueueIn.clear();
             } catch (InterruptedException e) {
                 logger.error("BlockingQueue thrown InteruptedException.Since only server should be capable of starting a shutdown this shouldn't happen");
                 logger.trace(e.getMessage());
@@ -171,7 +177,7 @@ public class ServerLogic implements Runnable{
                     player.getPositionX(),
                     player.getPositionY(),
                     player.getHealth());
-            copy.add(new DTO(unitCopy,towerCopy,playerCopy,dto.getId()));
+            copy.add(new DTO(unitCopy,towerCopy,playerCopy,dto.getId(),dto.getName()));
         }
         return copy;
     }

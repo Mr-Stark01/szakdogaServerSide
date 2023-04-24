@@ -1,6 +1,7 @@
 package com.szakdogaServer.network;
 
 import com.szakdogaServer.BusinessLogic.ServerLogic;
+import com.szakdogaServer.DataBase.DB;
 import org.apache.logging.log4j.LogManager;
 import org.datatransferobject.DTO;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +18,8 @@ public class Server {
     private ArrayList<Socket> players;
     private final ExecutorService executor = Executors.newFixedThreadPool(20);
     private Logger logger;
+    private DB db= new DB();
+    private CyclicBarrier barrier;
     public Server(){
         logger = LogManager.getLogger(Server.class);
     }
@@ -25,9 +28,10 @@ public class Server {
         try{
         serverSocket = new ServerSocket(port);
         logger.info("Server socket created");
-        BlockingQueue<DTO> blockingQueueToLogicFromClients= new LinkedBlockingQueue<>(2);
-        BlockingQueue<ArrayList<DTO>> blockingQueueToClientsFromLogic= new LinkedBlockingQueue<>(2);
-        ServerLogic serverLogic = new ServerLogic(blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic);
+        BlockingQueue<DTO> blockingQueueToLogicFromClients= new LinkedBlockingQueue<DTO>(2);
+        BlockingQueue<ArrayList<DTO>> blockingQueueToClientsFromLogic= new LinkedBlockingQueue<ArrayList<DTO>>(2);
+        barrier=new CyclicBarrier(2);
+        ServerLogic serverLogic = new ServerLogic(blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic,db);
 
 
         System.out.println(serverSocket.getLocalSocketAddress());
@@ -42,8 +46,8 @@ public class Server {
         //future2.isDone();
         try{
             executor.submit(serverLogic);
-            Future<Integer> f1=executor.submit(new GameClientHandler(players.get(0),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
-            Future<Integer> f2=executor.submit(new GameClientHandler(players.get(1),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic));
+            Future<Integer> f1=executor.submit(new GameClientHandler(players.get(0),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic,barrier));
+            Future<Integer> f2=executor.submit(new GameClientHandler(players.get(1),blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic,barrier));
             logger.info("Awaiting end of threads");
             f1.get();
             f2.get();
