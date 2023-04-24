@@ -32,8 +32,6 @@ public class Server {
         BlockingQueue<ArrayList<DTO>> blockingQueueToClientsFromLogic= new LinkedBlockingQueue<ArrayList<DTO>>(2);
         barrier=new CyclicBarrier(2);
         ServerLogic serverLogic = new ServerLogic(blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic,db);
-
-
         System.out.println(serverSocket.getLocalSocketAddress());
         players = new ArrayList<>();
         while(players.size()<2){

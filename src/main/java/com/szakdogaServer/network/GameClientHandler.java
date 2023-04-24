@@ -54,10 +54,8 @@ public class GameClientHandler implements Callable {
                 barrier.await();
                 logger.info("Data received");
                 blockingQueueOut.offer(dto);
-                System.out.println("after blocking");
                 sendData();
                 barrier.await();
-                System.out.println("data sent");
                 logger.info("Data sent");
 
             }
@@ -75,7 +73,6 @@ public class GameClientHandler implements Callable {
     public void receiveData() throws IOException, ClassNotFoundException {
         logger.debug("waiting for message");
         dto = (DTO) objectInputStream.readObject();
-        System.out.println(" receive id + id"+id+"\t"+ dto.getId()+"\t"+Thread.currentThread().getId());
         if(setup){
             dto.setId(id);
             setup=false;
@@ -85,14 +82,12 @@ public class GameClientHandler implements Callable {
     public void sendData() throws InterruptedException, IOException {
         DTOListOut=blockingQueueIn.take();
         if (DTOListOut.get(0).getId() == id) {
-            System.out.println("send 0 id + id"+id+"\t"+ DTOListOut.get(0).getId()+"\t"+Thread.currentThread().getId());
             ArrayList<DTO> tmp = new ArrayList<>();
             tmp.add(DTOListOut.get(0));
             tmp.add(DTOListOut.get(1));
             objectOutputStream.writeObject(tmp);
             objectOutputStream.flush();
         } else {
-            System.out.println("send 1 id + id"+id+"\t"+ DTOListOut.get(1).getId()+"\t"+Thread.currentThread().getId());
             ArrayList<DTO> tmp = new ArrayList<>();
             tmp.add(DTOListOut.get(1));
             tmp.add(DTOListOut.get(0));

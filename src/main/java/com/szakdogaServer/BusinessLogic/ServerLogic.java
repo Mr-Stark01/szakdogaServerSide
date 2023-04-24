@@ -34,11 +34,8 @@ public class ServerLogic implements Runnable{
     public void run() {
         while (true){
             try {
-                System.out.println("blocking b4");
                 DTOList.add(blockingQueueIn.take());
-                System.out.println("blocking durring");
                 DTOList.add(blockingQueueIn.take());
-                System.out.println("blocking after");
                 blockingQueueIn.clear();
             } catch (InterruptedException e) {
                 logger.error("BlockingQueue thrown InteruptedException.Since only server should be capable of starting a shutdown this shouldn't happen");
