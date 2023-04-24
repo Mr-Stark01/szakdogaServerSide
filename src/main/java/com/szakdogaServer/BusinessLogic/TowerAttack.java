@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TowerAttack {
 
-    public static void checkIfEnemyStillInRangeAndAllive(List<UnitDTO> units,TowerDTO towerDTO){//What a beauty
+    public static void checkIfEnemyStillInRangeAndAllive(List<UnitDTO> units,TowerDTO towerDTO){
         UnitDTO target =towerDTO.getTarget();
         if(target==null){
             findTarget(units,towerDTO);
