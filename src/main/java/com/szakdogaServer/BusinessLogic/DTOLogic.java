@@ -24,12 +24,10 @@ public class DTOLogic {
 
     public void checkIfDTOHasCorrectPossition(DTO dto, DB db){
         if(dto.getPlayerDTO().getPositionX()==-1 || dto.getPlayerDTO().getPositionY()==-1) {
-            System.out.println(playerCount);
             logger.debug("only 2 of these should exist");
             dto.getPlayerDTO().setPositionX(db.getPlayerPositionX(playerCount));
             dto.getPlayerDTO().setPositionY(db.getPlayerPositionY(playerCount));
             playerCount++;
-            System.out.println(dto.getPlayerDTO().getPositionX());
         }
         playerCount=playerCount>2?1:2;
     }
