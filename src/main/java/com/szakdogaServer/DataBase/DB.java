@@ -22,6 +22,7 @@ public class DB {
         } catch (SQLException e) {
             logger.error("SQLite hasn't succeded in establishing a connection");
             logger.trace(e.getMessage());
+            System.exit(-1);
         }
     }
 

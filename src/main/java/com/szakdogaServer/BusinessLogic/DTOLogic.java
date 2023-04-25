@@ -41,6 +41,10 @@ public class DTOLogic {
                 unitDTO.setId(getNewId());
                 pathFinder.setupNextTiles(unitDTO);
                 pathFinder.calculateAngle(unitDTO);
+
+            }
+            if(unitDTO.getNextX().contains(-1) ||unitDTO.getNextY().contains(-1)){
+                unitDTO.setId(-1);
             }
         }
     }
