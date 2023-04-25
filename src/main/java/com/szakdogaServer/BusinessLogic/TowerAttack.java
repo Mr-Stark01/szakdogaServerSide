@@ -25,13 +25,14 @@ public class TowerAttack {
         }
     }
     public static int attack(List<UnitDTO> units,TowerDTO towerDTO){
-        if(new Date().getTime()-towerDTO.getLastTimeOfAttack() > towerDTO.getAttackTime() && towerDTO.getId() != -1){
+        if(towerDTO.getLastTimeOfAttack()+(long)(towerDTO.getAttackTime()*1000f) <= new Date().getTime() && towerDTO.getId() != -1){
             checkIfEnemyStillInRangeAndAllive(units,towerDTO);
             if(towerDTO.getTarget()!=null){
                 UnitDTO tmpTarget=getTarget(units,towerDTO);
                 tmpTarget.setHealth(towerDTO.getTarget().getHealth()-towerDTO.getDamage());
                 towerDTO.setLastTimeOfAttack(new Date().getTime());
                 tmpTarget.setId(tmpTarget.getHealth()<0?-1:tmpTarget.getId());
+                towerDTO.getTarget().setHealth(tmpTarget.getHealth());
                 return tmpTarget.getPrice()-10;
             }
         }
@@ -66,6 +67,13 @@ public class TowerAttack {
             }
         }
     }
+
+    /**
+     * Find the target in the UnitList and returns it
+     * @param units
+     * @param towerDTO
+     * @return
+     */
     private static UnitDTO getTarget(List<UnitDTO> units,TowerDTO towerDTO){
         for(UnitDTO unit:units){
             if(unit.getId()==towerDTO.getTarget().getId()){
@@ -75,7 +83,7 @@ public class TowerAttack {
         return null;
     }
     private static ArrayList<Integer> deepcopy(ArrayList<Integer> nextList) {
-        ArrayList<Integer> copy=new ArrayList<Integer>();
+        ArrayList<Integer> copy=new ArrayList<>();
         for(int elem:nextList){
             copy.add(elem);
         }
