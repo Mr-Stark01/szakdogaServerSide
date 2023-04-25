@@ -21,6 +21,18 @@ public class PathFinder {
         TiledMap map = loader.load("src/main/resources/maps/defmap.tmx");
         tiledMapTileLayer = (TiledMapTileLayer) map.getLayers().get(0);
     }
+    public boolean canNotBuildThere(int X,int Y){
+        if(X<0 || Y<0 || X> tiledMapTileLayer.getWidth() || Y > tiledMapTileLayer.getHeight()) {
+            return true;
+        }
+        if(tiledMapTileLayer.getCell(X,Y).getTile().getProperties().containsKey("road") ){
+            return true;
+        }
+        if(tiledMapTileLayer.getCell(X,Y).getTile().getProperties().containsKey("water")){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * sets up at least the next 6 steps for lag comp reasons

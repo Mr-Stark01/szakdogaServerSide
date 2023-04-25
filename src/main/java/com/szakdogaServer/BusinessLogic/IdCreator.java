@@ -9,7 +9,7 @@ public class IdCreator {
     static final int LOWERBOUND=1;
 
     private static Set<Integer> usedIds= new LinkedHashSet<>();
-    public static int getNewId(){
+    public synchronized static int getNewId(){
         int number = ThreadLocalRandom.current().nextInt(LOWERBOUND, UPPERBOUND);
         while(!usedIds.add(number)){
             number = ThreadLocalRandom.current().nextInt(LOWERBOUND, UPPERBOUND);

@@ -1,6 +1,8 @@
 package com.szakdogaServer.BusinessLogic;
 
 import com.szakdogaServer.DataBase.DB;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;
 import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;
@@ -15,12 +17,14 @@ import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
 public class DTOLogic {
     int playerCount=1;
     PathFinder pathFinder;
+    Logger logger = LogManager.getLogger(DTOLogic.class);
     public DTOLogic(PathFinder pathFinder){
         this.pathFinder=pathFinder;
-
     }
+
     public void checkIfDTOHasCorrectPossition(DTO dto, DB db){
         if(dto.getPlayerDTO().getPositionX()==-1 || dto.getPlayerDTO().getPositionY()==-1) {
+            logger.debug("only 2 of these should exist");
             dto.getPlayerDTO().setPositionX(db.getPlayerPositionX(playerCount));
             dto.getPlayerDTO().setPositionY(db.getPlayerPositionY(playerCount));
             playerCount++;
@@ -53,6 +57,10 @@ public class DTOLogic {
     public void checkIfPlayerCanCreateTower(DTO dto,DTO enemyDTO,TowerDTO towerDTO){
         if(towerDTO.getId()==0){
             if(dto.getPlayerDTO().getMoney()-towerDTO.getPrice()<0){
+                towerDTO.setId(-1);
+                return;
+            }
+            if(pathFinder.canNotBuildThere(towerDTO.getX(),towerDTO.getY())){
                 towerDTO.setId(-1);
                 return;
             }

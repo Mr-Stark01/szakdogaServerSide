@@ -2,13 +2,10 @@
 <Configuration status="warn">
     <Properties>
         <Property name="basePath">src/main/resources/logs</Property>
-        <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
+        <Property name="LOG_PATTERN">"%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"</Property>
     </Properties>
 
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT" >
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-        </Console>
         <RollingFile name="fileLogger"
                      fileName="${basePath}/app.log"
                      filePattern="${basePath}/app-%d{yyyy-MM-dd}.log">
@@ -22,14 +19,14 @@
             </Policies>
             <!-- Max 10 files will be created everyday -->
             <DefaultRolloverStrategy max="10">
-                <Delete basePath="${basePathr}" maxDepth="10">
+                <Delete basePath="${basePath}" maxDepth="10">
                     <!-- Delete all files older than 30 days -->
                     <IfLastModified age="30d" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <RollingFile name="debugLog" fileName="${APP_LOG_ROOT}/app-debug.log"
-                     filePattern="${APP_LOG_ROOT}/app-debug-%d{yyyy-MM-dd}-%i.log">
+        <RollingFile name="debugLog" fileName="${basePath}/app-debug.log"
+                     filePattern="${basePath}/app-debug-%d{yyyy-MM-dd}-%i.log">
             <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
@@ -37,8 +34,8 @@
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
-        <RollingFile name="errorLog" fileName="${APP_LOG_ROOT}/app-error.log"
-                     filePattern="${APP_LOG_ROOT}/app-error-%d{yyyy-MM-dd}-%i.log" >
+        <RollingFile name="errorLog" fileName="${basePath}/app-error.log"
+                     filePattern="${basePath}/app-error-%d{yyyy-MM-dd}-%i.log" >
             <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
@@ -46,8 +43,8 @@
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
-        <RollingFile name="traceLog" fileName="${APP_LOG_ROOT}/app-trace.log"
-                     filePattern="${APP_LOG_ROOT}/app-trace-%d{yyyy-MM-dd}-%i.log" >
+        <RollingFile name="traceLog" fileName="${basePath}/app-trace.log"
+                     filePattern="${basePath}/app-trace-%d{yyyy-MM-dd}-%i.log" >
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB" />
