@@ -29,7 +29,9 @@ public class GameClientHandler implements Callable<Integer> {
     private final int id = getNewId();
     private Logger logger;
     private boolean setup=true;
+    private boolean finished=false;
     private CyclicBarrier barrier;
+
     public GameClientHandler(Socket socket, BlockingQueue<DTO> blockingQueueOut, BlockingQueue<ArrayList<DTO>> blockingQueueIn, CyclicBarrier barrier) throws InterruptedException {
         this.barrier=barrier;
         this.clientSocket = socket;
@@ -57,7 +59,9 @@ public class GameClientHandler implements Callable<Integer> {
                 sendData();
                 barrier.await();
                 logger.info("Data sent");
-
+                if(finished){
+                    return 0;
+                }
             }
             catch (InterruptedException | IOException | ClassNotFoundException e){
                 e.printStackTrace();
@@ -94,6 +98,7 @@ public class GameClientHandler implements Callable<Integer> {
             objectOutputStream.writeObject(tmp);
             objectOutputStream.flush();
         }
+        finished=DTOListOut.get(0).getId()<0;
         objectOutputStream.flush();
         DTOListOut.clear();
         dto = null;

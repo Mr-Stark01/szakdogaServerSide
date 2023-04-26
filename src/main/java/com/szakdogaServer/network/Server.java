@@ -1,5 +1,6 @@
 package com.szakdogaServer.network;
 
+import com.badlogic.gdx.Gdx;
 import com.szakdogaServer.BusinessLogic.ServerLogic;
 import com.szakdogaServer.DataBase.DB;
 import org.apache.logging.log4j.LogManager;
@@ -50,7 +51,7 @@ public class Server {
             f1.get();
             f2.get();
             logger.info("Both thread finished");
-            System.out.println("over");
+            executor.shutdown();
         }catch (InterruptedException e){
             logger.error("One thread throw a unexpected exceptions shutting down");
             logger.trace(e.getMessage());
@@ -84,6 +85,10 @@ public class Server {
         catch (IOException e){
             logger.error("IO exception occured probably already closed socket");
             logger.trace(e.getMessage());
+        }
+        finally {
+            db.disconnect();
+            Gdx.app.exit();
         }
     }
 

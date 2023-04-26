@@ -25,9 +25,11 @@ public class Main {
         logger.info("Headless Application setup");
         Gdx.gl20 = Mockito.mock(GL20.class);
         Gdx.gl = Gdx.gl20;
-        logger.info("Necesarry graphical elements succesfully mocked");
+        logger.info("Necessary graphical elements successfully mocked");
         Server server = new Server();
         server.start(56227);
+        application.exit();
         Gdx.app.exit();
+        System.exit(0);
     }
 }
