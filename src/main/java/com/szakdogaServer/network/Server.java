@@ -28,8 +28,8 @@ public class Server {
         try{
         serverSocket = new ServerSocket(port);
         logger.info("Server socket created");
-        BlockingQueue<DTO> blockingQueueToLogicFromClients= new LinkedBlockingQueue<DTO>(2);
-        BlockingQueue<ArrayList<DTO>> blockingQueueToClientsFromLogic= new LinkedBlockingQueue<ArrayList<DTO>>(2);
+        BlockingQueue<DTO> blockingQueueToLogicFromClients= new LinkedBlockingQueue<>(2);
+        BlockingQueue<ArrayList<DTO>> blockingQueueToClientsFromLogic= new LinkedBlockingQueue<>(2);
         barrier=new CyclicBarrier(2);
         ServerLogic serverLogic = new ServerLogic(blockingQueueToLogicFromClients,blockingQueueToClientsFromLogic,db);
         System.out.println(serverSocket.getLocalSocketAddress());
@@ -61,6 +61,7 @@ public class Server {
         catch (Exception e) {
             logger.error("An error occured on one of the threads");
             logger.trace(e.getMessage());
+            System.exit(-1);
         }
         finally {
             stop();

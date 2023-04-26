@@ -11,7 +11,10 @@ allprojects {
     }
 }
 
-
+tasks.withType(JavaCompile).all {
+    options.compilerArgs.add("-Xlint:all")
+    options.compilerArgs.add("-Werror")
+}
 
 ext{
     gdxVersion = '1.11.0'

@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 
 import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
 
-public class GameClientHandler implements Callable {
+public class GameClientHandler implements Callable<Integer> {
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private DTO dto;
@@ -62,11 +62,11 @@ public class GameClientHandler implements Callable {
             catch (InterruptedException | IOException | ClassNotFoundException e){
                 e.printStackTrace();
                 logger.trace(e.getMessage());
-                return -1;
+                System.exit(-1);
             } catch (BrokenBarrierException e) {
                 e.printStackTrace();
                 logger.trace(e.getMessage());
-                return -1;
+                System.exit(-1);
             }
         }
     }

@@ -151,7 +151,7 @@ public class ServerLogic implements Runnable{
                                     unit.getNextY(),
                                     unit.getLastStep()),
                             tower.getAttackTime(),
-                            tower.getDeltaSum(),
+                            tower.getLastTimeOfAttack(),
                             tower.getId(),
                             tower.getTowerClass()));
                 }
@@ -164,7 +164,7 @@ public class ServerLogic implements Runnable{
                             tower.getRange(),
                             null,
                             tower.getAttackTime(),
-                            tower.getDeltaSum(),
+                            tower.getLastTimeOfAttack(),
                             tower.getId(),
                             tower.getTowerClass()));
                 }

@@ -53,12 +53,9 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <root additivity="false" level="debug">
-            <appender-ref ref="debugLog" />
-        </root>
-        <Logger name="info" additivity="false" level="info">
+        <root additivity="false" level="info">
             <appender-ref ref="fileLogger" />
-        </Logger>
+        </root>
         <Logger name="debug" additivity="false" level="debug">
             <appender-ref ref="debugLog" />
         </Logger>
