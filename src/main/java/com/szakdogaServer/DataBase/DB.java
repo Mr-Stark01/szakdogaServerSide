@@ -49,7 +49,7 @@ public class DB {
      */
     public int getPlayerPositionY(int playerCount) {
         logger.info("get player possition");
-        String prep = "SELECT Y FROM MAPINFO WHERE PLAYER = ?"; //TODO this table doesn't exist
+        String prep = "SELECT Y FROM MAPINFO WHERE PLAYER = ?";
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(prep);
             preparedStatement.setInt(1,playerCount);
@@ -78,23 +78,6 @@ public class DB {
         }
     }
 
-    private void test(){
-        try {
-            String prepTest = "INSERT INTO PLAYER(name,points,wins,losses) values(?,?,?,?);";
-            PreparedStatement preparedStatement = conn.prepareStatement(prepTest);
-            preparedStatement.setString(1, "testS");
-            preparedStatement.setFloat(2, 21.23f);
-            preparedStatement.setInt(3, 12);
-            preparedStatement.setInt(4, 32);
-            int row = preparedStatement.executeUpdate();
-            String prepTest2 = "SELECT * FROM PLAYER";
-            PreparedStatement preparedStatement1 = conn.prepareStatement(prepTest2);
-            ResultSet resultSet = preparedStatement1.executeQuery();
-        } catch (SQLException e){
-            logger.error("an error occured while handling the querry");
-            logger.trace(e.getMessage());
-        }
-    }
     public void disconnect(){
         logger.info("Disconnecting from DB");
         try {

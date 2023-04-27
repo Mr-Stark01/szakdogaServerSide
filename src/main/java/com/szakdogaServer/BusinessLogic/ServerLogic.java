@@ -64,8 +64,6 @@ public class ServerLogic implements Runnable{
                 logger.info("Towers attacked");
                 if(dto.getPlayerDTO().getHealth()<=0){
                     logger.info("Game finished one player reached 0 health");
-                    dto.setId(-3);//-3 loss
-                    enemyDTO.setId(-4);//-4 win
                     db.addNameToDb(dto.getName(),dto.getPlayerDTO().getMoney(),0,1);
                     db.addNameToDb(enemyDTO.getName(),enemyDTO.getPlayerDTO().getMoney(),1,0);
                     break;

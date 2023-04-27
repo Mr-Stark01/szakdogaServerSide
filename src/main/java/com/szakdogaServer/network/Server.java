@@ -56,7 +56,7 @@ public class Server {
             logger.error("One thread throw a unexpected exceptions shutting down");
             logger.trace(e.getMessage());
             stop();
-            //TODO probably throw exception and that why it finishes
+
         }
         }
         catch (Exception e) {

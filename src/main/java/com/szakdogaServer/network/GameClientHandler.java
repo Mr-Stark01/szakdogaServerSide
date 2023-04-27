@@ -98,7 +98,7 @@ public class GameClientHandler implements Callable<Integer> {
             objectOutputStream.writeObject(tmp);
             objectOutputStream.flush();
         }
-        finished=DTOListOut.get(0).getId()<0;
+        finished=DTOListOut.get(0).getPlayerDTO().getHealth()<=0 || DTOListOut.get(1).getPlayerDTO().getHealth()<=0;
         objectOutputStream.flush();
         DTOListOut.clear();
         dto = null;
