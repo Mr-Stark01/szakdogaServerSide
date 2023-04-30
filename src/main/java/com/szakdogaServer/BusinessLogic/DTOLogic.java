@@ -15,73 +15,84 @@ import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
  * This class facilitates everything that only requires 1 dto and not both.
  */
 public class DTOLogic {
-    int playerCount=1;
-    PathFinder pathFinder;
-    Logger logger = LogManager.getLogger(DTOLogic.class);
-    public DTOLogic(PathFinder pathFinder){
-        this.pathFinder=pathFinder;
+    private static int playerCount = 1;
+    private static PathFinder pathFinder = new PathFinder();
+    private static Logger logger = LogManager.getLogger(DTOLogic.class);
+    public DTOLogic(){
+
     }
 
-    public void checkIfDTOHasCorrectPossition(DTO dto, DB db){
-        if(dto.getPlayerDTO().getPositionX()==-1 || dto.getPlayerDTO().getPositionY()==-1) {
-            logger.debug("only 2 of these should exist");
+    public static void checkIfDTOHasCorrectPossition(DTO dto,final DB db){
+        if(dto.getPlayerDTO().getPositionX()==Flags.OUT_OF_BOUNDS_INDEX
+                || dto.getPlayerDTO().getPositionY()==Flags.OUT_OF_BOUNDS_INDEX) {
             dto.getPlayerDTO().setPositionX(db.getPlayerPositionX(playerCount));
             dto.getPlayerDTO().setPositionY(db.getPlayerPositionY(playerCount));
             playerCount++;
         }
         playerCount=playerCount>2?1:2;
     }
-    public void setupNewUnits(DTO dto,UnitDTO unitDTO){
-        if(unitDTO.getId()==0){
-            if(dto.getPlayerDTO().getMoney()-unitDTO.getPrice()<0){
-                unitDTO.setId(-1);
+    public static void setupNewUnits(DTO dto,UnitDTO unitDTO){
+        if(unitDTO.getId()== Flags.TO_BE_INITIALIZED_ID){
+            if(!hasEnoughMoney(dto,unitDTO.getPrice())){
+                unitDTO.setId(Flags.FOR_REMOVAL_ID);
             }
             else {
+                //Paying for tower
                 dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-unitDTO.getPrice());
                 unitDTO.setId(getNewId());
                 pathFinder.setupNextTiles(unitDTO);
                 pathFinder.calculateAngle(unitDTO);
 
             }
-            if(unitDTO.getNextX().contains(-1) ||unitDTO.getNextY().contains(-1)){
-                unitDTO.setId(-1);
+            if(isOutOfBounds(unitDTO)){
+                unitDTO.setId(Flags.FOR_REMOVAL_ID);
             }
         }
     }
-    public void step(UnitDTO unitDTO){
-        if(unitDTO.getId()!=-1 && !unitDTO.getNextX().contains(-1)) {
+
+    public static void step(UnitDTO unitDTO){
+        if(unitDTO.getId()!= Flags.FOR_REMOVAL_ID && !isOutOfBounds(unitDTO)) {
             pathFinder.checkNextStep(unitDTO);
         }
-        else if(unitDTO.getNextX().contains(-1) && unitDTO.getNextX().size()>1 && unitDTO.getLastStep() + ((int)(1000/unitDTO.getSpeed())) <= new Date().getTime()){
+        else if(isOutOfBounds(unitDTO) &&
+                unitDTO.getLastStep() + ((int)(1000/unitDTO.getSpeed())) <= new Date().getTime()){
             unitDTO.getNextX().remove(0);
             unitDTO.getNextY().remove(0);
             unitDTO.setLastStep(new Date().getTime());
         }
     }
-    public void checkIfPlayerCanCreateTower(DTO dto,DTO enemyDTO,TowerDTO towerDTO){
-        if(towerDTO.getId()==0){
-            if(dto.getPlayerDTO().getMoney()-towerDTO.getPrice()<0){
-                towerDTO.setId(-1);
+    public static void checkIfPlayerCanCreateTower(DTO dto,DTO enemyDTO,TowerDTO towerDTO){
+        if(towerDTO.getId()== Flags.TO_BE_INITIALIZED_ID){
+            if(!hasEnoughMoney(dto,towerDTO.getPrice())){
+                towerDTO.setId(Flags.FOR_REMOVAL_ID);
                 return;
             }
-            if(pathFinder.canNotBuildThere(towerDTO.getX(),towerDTO.getY())){
-                towerDTO.setId(-1);
+            if(!pathFinder.canBuildThere(towerDTO.getX(),towerDTO.getY())){
+                towerDTO.setId(Flags.FOR_REMOVAL_ID);
                 return;
             }
-            for(TowerDTO towerDTO1:dto.getTowerDTOs()){
-                if(towerDTO != towerDTO1 && towerDTO.getX()==towerDTO1.getX() && towerDTO.getY()==towerDTO1.getY()){
-                    towerDTO.setId(-1);
+            //Already has tower placed by me
+            for(TowerDTO tower:dto.getTowerDTOs()){
+                if(towerDTO != tower && towerDTO.getX()==tower.getX() && towerDTO.getY()==tower.getY()){
+                    towerDTO.setId(Flags.FOR_REMOVAL_ID);
                     return;
                 }
             }
-            for(TowerDTO towerDTO1:enemyDTO.getTowerDTOs()){
-                if( towerDTO != towerDTO1 && towerDTO.getX()==towerDTO1.getX() && towerDTO.getY()==towerDTO1.getY()){
-                    towerDTO.setId(-1);
+            //Already has tower placed by Enemy
+            for(TowerDTO tower:enemyDTO.getTowerDTOs()){
+                if( towerDTO != tower && towerDTO.getX()==tower.getX() && towerDTO.getY()==tower.getY()){
+                    towerDTO.setId(Flags.FOR_REMOVAL_ID);
                     return;
                 }
             }
             dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()-towerDTO.getPrice());
             towerDTO.setId(getNewId());
         }
+    }
+    private static boolean hasEnoughMoney(DTO dto,int price){
+        return dto.getPlayerDTO().getMoney()-price>=0;
+    }
+    private static boolean isOutOfBounds(UnitDTO unitDTO){
+        return unitDTO.getNextX().contains(Flags.OUT_OF_BOUNDS_INDEX) ||unitDTO.getNextY().contains(Flags.OUT_OF_BOUNDS_INDEX);
     }
 }

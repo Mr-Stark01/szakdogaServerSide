@@ -31,8 +31,7 @@ public class DTOLogicTest {
         DB db= new DB();
         DTO dto=new DTO(null,null,new PlayerDTO(100,-1,-1,100),
                 0,null);
-        DTOLogic dtoLogic=new DTOLogic(new PathFinder());
-        dtoLogic.checkIfDTOHasCorrectPossition(dto,db);
+        DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
         Assertions.assertTrue(dto.getPlayerDTO().getPositionX()>0);
         Assertions.assertTrue(dto.getPlayerDTO().getPositionY()>0);
     }
@@ -41,13 +40,12 @@ public class DTOLogicTest {
         DB db= new DB();
         DTO dto=new DTO(null,null,new PlayerDTO(100,-1,-1,100),
                 0,null);
-        DTOLogic dtoLogic=new DTOLogic(new PathFinder());
-        dtoLogic.checkIfDTOHasCorrectPossition(dto,db);
+        DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
         UnitDTO unitDTO=new UnitDTO(1,1,1,1,dto.getPlayerDTO().getPositionX()
                 ,dto.getPlayerDTO().getPositionY()
                 ,1,1,1,dto.getPlayerDTO().getPositionX(),dto.getPlayerDTO().getPositionY()
                 ,"test",0,new ArrayList<>(),new ArrayList<>(),0l);
-        dtoLogic.setupNewUnits(dto,unitDTO);
+        DTOLogic.setupNewUnits(dto,unitDTO);
         Assertions.assertEquals(6,unitDTO.getNextX().size());
         Assertions.assertEquals(6,unitDTO.getNextY().size());
         Assertions.assertNotEquals(0,unitDTO.getId());
@@ -57,13 +55,12 @@ public class DTOLogicTest {
         DB db= new DB();
         DTO dto=new DTO(null,null,new PlayerDTO(100,-1,-1,100),
                 0,null);
-        DTOLogic dtoLogic=new DTOLogic(new PathFinder());
-        dtoLogic.checkIfDTOHasCorrectPossition(dto,db);
+        DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
         UnitDTO unitDTO=new UnitDTO(1,1,1,120,dto.getPlayerDTO().getPositionX()
                 ,dto.getPlayerDTO().getPositionY()
                 ,1,1,1,dto.getPlayerDTO().getPositionX(),dto.getPlayerDTO().getPositionY()
                 ,"test",0,new ArrayList<>(),new ArrayList<>(),0l);
-        dtoLogic.setupNewUnits(dto,unitDTO);
+        DTOLogic.setupNewUnits(dto,unitDTO);
         Assertions.assertEquals(-1,unitDTO.getId());
     }
     @Test
@@ -71,13 +68,12 @@ public class DTOLogicTest {
         DB db= new DB();
         DTO dto=new DTO(null,null,new PlayerDTO(100,-1,-1,100),
                 0,null);
-        DTOLogic dtoLogic=new DTOLogic(new PathFinder());
-        dtoLogic.checkIfDTOHasCorrectPossition(dto,db);
+        DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
         UnitDTO unitDTO=new UnitDTO(1,1,1,120,dto.getPlayerDTO().getPositionX()
                 ,dto.getPlayerDTO().getPositionY()
                 ,1,1,1,0,0
                 ,"test",0,new ArrayList<>(),new ArrayList<>(),0l);
-        dtoLogic.setupNewUnits(dto,unitDTO);
+        DTOLogic.setupNewUnits(dto,unitDTO);
         Assertions.assertEquals(-1,unitDTO.getId());
     }
 }

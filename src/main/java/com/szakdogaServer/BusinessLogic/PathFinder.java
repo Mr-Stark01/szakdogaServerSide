@@ -8,12 +8,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.datatransferobject.UnitDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.function.Function;
 
 
 public class PathFinder {
+    private static final int MIN_NEXT_STEP_COUNT=6;
     private TiledMapTileLayer tiledMapTileLayer;
-    private Logger logger;
+    private static Logger logger;
 
     public PathFinder() {
         logger = LogManager.getLogger(PathFinder.class);
@@ -21,17 +24,17 @@ public class PathFinder {
         TiledMap map = loader.load("src/main/resources/maps/defmap.tmx");
         tiledMapTileLayer = (TiledMapTileLayer) map.getLayers().get(0);
     }
-    public boolean canNotBuildThere(int X,int Y){
+    public boolean canBuildThere(int X,int Y){
         if(X<0 || Y<0 || X> tiledMapTileLayer.getWidth() || Y > tiledMapTileLayer.getHeight()) {
-            return true;
+            return false;
         }
-        if(tiledMapTileLayer.getCell(X,Y).getTile().getProperties().containsKey("road") ){
-            return true;
+        if(tiledMapTileLayer.getCell(X,Y).getTile().getProperties().containsKey(Flags.ROAD_FLAG) ){
+            return false;
         }
-        if(tiledMapTileLayer.getCell(X,Y).getTile().getProperties().containsKey("water")){
-            return true;
+        if(tiledMapTileLayer.getCell(X,Y).getTile().getProperties().containsKey(Flags.WATER_FLAG)){
+            return false;
         }
-        return false;
+        return true;
     }
 
     /**
@@ -41,9 +44,11 @@ public class PathFinder {
     public void setupNextTiles(UnitDTO unit){
         logger.info("setuping up new unit");
         calculateNextStep(unit,Math.round(unit.getX()),Math.round(unit.getY()),unit.getPreviousX(), unit.getPreviousY());
-        calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1),unit.getPreviousX(), unit.getPreviousY());
+        calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1)
+                ,unit.getPreviousX(), unit.getPreviousY());
         for(int i=0;i<4;i++){
-            calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1),unit.getNextX().get(unit.getNextX().size()-2), unit.getNextY().get(unit.getNextY().size()-2));
+            calculateNextStep(unit,unit.getNextX().get(unit.getNextX().size()-1),unit.getNextY().get(unit.getNextY().size()-1)
+                    ,unit.getNextX().get(unit.getNextX().size()-2), unit.getNextY().get(unit.getNextY().size()-2));
         }
         unit.setLastStep(new Date().getTime());
         logger.info("unit setup with atleast 6 steps");
@@ -54,9 +59,10 @@ public class PathFinder {
      * @param unit
      */
     public void checkNextStep(UnitDTO unit) {
-        if(unit.getNextX().size()<6 || unit.getNextY().size() < 6) {
+        if(unit.getNextX().size()<MIN_NEXT_STEP_COUNT || unit.getNextY().size() < MIN_NEXT_STEP_COUNT) {
             logger.info("Less than 6 steps remaning.");
-            calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()-1), unit.getNextY().get(unit.getNextY().size()-1), unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
+            calculateNextStep(unit, unit.getNextX().get(unit.getNextX().size()-1), unit.getNextY().get(unit.getNextY().size()-1),
+                    unit.getNextX().get(unit.getNextX().size() - 2), unit.getNextY().get(unit.getNextY().size() - 2));
         }
         float distance = (float) Math.sqrt((Math.pow(unit.getPreviousX()-unit.getNextX().get(0),2))+(Math.pow(unit.getPreviousY()-unit.getNextY().get(0),2)));
         if((unit.getLastStep() + (long)(((1000/unit.getSpeed()))*distance)) <= new Date().getTime()){ //The conversion is necesary otherwise it's treated as string which is bad
@@ -90,53 +96,42 @@ public class PathFinder {
     }
 
     public void calculateNextStep(UnitDTO unit,int X,int Y,int previousX,int previousY){
-        /*for(int i=-1;i<=1;i++){
-            for(int j=-1;j<=1;j++){
-                if (tiledMapTileLayer.getCell(X + i, Y + j).getTile().getProperties().containsKey("road") &&
-                        !(previousX == X + i && Y + j == previousY)) {
-                    unit.getNextX().add(X + i);
-                    unit.getNextY().add(Y + j);
-                    setPreviousCoordinates(X,Y,unit);
-                    return;
-                }
-            }
-        }*/
-        if (tiledMapTileLayer.getCell(X, Y + 1).getTile().getProperties().containsKey("road") &&
+        if (tiledMapTileLayer.getCell(X, Y + 1).getTile().getProperties().containsKey(Flags.ROAD_FLAG) &&
                 !(previousX == X && Y + 1 == previousY)) {
             unit.getNextX().add(X);
             unit.getNextY().add(Y + 1);
            
             return;
         }
-        if (tiledMapTileLayer.getCell(X, Y - 1).getTile().getProperties().containsKey("road") &&
+        if (tiledMapTileLayer.getCell(X, Y - 1).getTile().getProperties().containsKey(Flags.ROAD_FLAG) &&
                 !(previousX == X && Y - 1 == previousY)) {
             unit.getNextX().add(X);
             unit.getNextY().add(Y - 1);
            
             return;
         }
-        if (tiledMapTileLayer.getCell(X - 1, Y).getTile().getProperties().containsKey("road") &&
+        if (tiledMapTileLayer.getCell(X - 1, Y).getTile().getProperties().containsKey(Flags.ROAD_FLAG) &&
                 !(previousX == X - 1 && Y == previousY)) {
             unit.getNextX().add(X - 1);
             unit.getNextY().add(Y);
            
             return;
         }
-        if (tiledMapTileLayer.getCell(X + 1, Y).getTile().getProperties().containsKey("road") &&
+        if (tiledMapTileLayer.getCell(X + 1, Y).getTile().getProperties().containsKey(Flags.ROAD_FLAG) &&
                 !(previousX == X + 1 && Y == previousY)) {
             unit.getNextX().add(X + 1);
             unit.getNextY().add(Y);
            
             return;
         }
-        if (tiledMapTileLayer.getCell(X + 1, Y + 1).getTile().getProperties().containsKey("road") &&
+        if (tiledMapTileLayer.getCell(X + 1, Y + 1).getTile().getProperties().containsKey(Flags.ROAD_FLAG) &&
                 !(previousX == X + 1 && Y + 1 == previousY)) {
             unit.getNextX().add(X + 1);
             unit.getNextY().add(Y + 1);
            
             return;
         }
-        if (tiledMapTileLayer.getCell(X + 1, Y - 1).getTile().getProperties().containsKey("road") &&
+        if (tiledMapTileLayer.getCell(X + 1, Y - 1).getTile().getProperties().containsKey(Flags.ROAD_FLAG) &&
                 !(previousX == X + 1 && Y - 1 == previousY)) {
             unit.getNextX().add(X + 1);
             unit.getNextY().add(Y - 1);
@@ -144,14 +139,14 @@ public class PathFinder {
             return;
         }
 
-        if (tiledMapTileLayer.getCell(X - 1, Y + 1).getTile().getProperties().containsKey("road") &&
+        if (tiledMapTileLayer.getCell(X - 1, Y + 1).getTile().getProperties().containsKey(Flags.ROAD_FLAG) &&
                 !(previousX == X - 1 && Y + 1 == previousY)) {
             unit.getNextX().add(X - 1);
             unit.getNextY().add(Y + 1);
            
             return;
         }
-        if (tiledMapTileLayer.getCell(X - 1, Y - 1).getTile().getProperties().containsKey("road") &&
+        if (tiledMapTileLayer.getCell(X - 1, Y - 1).getTile().getProperties().containsKey(Flags.ROAD_FLAG) &&
                 !(previousX == X - 1 && Y - 1 == previousY)) {
             unit.getNextX().add(X - 1);
             unit.getNextY().add(Y - 1);

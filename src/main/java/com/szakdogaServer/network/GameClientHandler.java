@@ -19,6 +19,8 @@ import java.util.concurrent.*;
 import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
 
 public class GameClientHandler implements Callable<Integer> {
+    private final int PLAYER_ONE=0;
+    private final int PLAYER_TWO=1;
     private final Socket clientSocket;
     private ObjectOutputStream objectOutputStream;
     private DTO dto;
@@ -45,10 +47,12 @@ public class GameClientHandler implements Callable<Integer> {
             logger.error("Creating Streams for the clientSocket throws error probably closed connection");
             logger.trace(e.getMessage());
         }
+        logger.info("Socket Handler created");
     }
 
     @Override
     public Integer call() {
+        System.out.println("here");
         while(true){
             try {
                 logger.info("Awaiting to received data");
@@ -63,11 +67,7 @@ public class GameClientHandler implements Callable<Integer> {
                     return 0;
                 }
             }
-            catch (InterruptedException | IOException | ClassNotFoundException e){
-                e.printStackTrace();
-                logger.trace(e.getMessage());
-                System.exit(-1);
-            } catch (BrokenBarrierException e) {
+            catch (InterruptedException | BrokenBarrierException |IOException | ClassNotFoundException e){
                 e.printStackTrace();
                 logger.trace(e.getMessage());
                 System.exit(-1);
@@ -85,20 +85,22 @@ public class GameClientHandler implements Callable<Integer> {
     }
     public void sendData() throws InterruptedException, IOException {
         DTOListOut=blockingQueueIn.take();
-        if (DTOListOut.get(0).getId() == id) {
+        if (DTOListOut.get(PLAYER_ONE).getId() == id) {
             ArrayList<DTO> tmp = new ArrayList<>();
-            tmp.add(DTOListOut.get(0));
-            tmp.add(DTOListOut.get(1));
+            logger.info("Server Data sent:1"+DTOListOut.get(PLAYER_ONE).toString()+"\nData 2:"+DTOListOut.get(PLAYER_TWO).toString());
+            tmp.add(DTOListOut.get(PLAYER_ONE));
+            tmp.add(DTOListOut.get(PLAYER_TWO));
             objectOutputStream.writeObject(tmp);
             objectOutputStream.flush();
         } else {
             ArrayList<DTO> tmp = new ArrayList<>();
-            tmp.add(DTOListOut.get(1));
-            tmp.add(DTOListOut.get(0));
+            logger.info("Server Data sent:1"+DTOListOut.get(PLAYER_TWO).toString()+"\nData 2:"+DTOListOut.get(PLAYER_ONE).toString());
+            tmp.add(DTOListOut.get(PLAYER_TWO));
+            tmp.add(DTOListOut.get(PLAYER_ONE));
             objectOutputStream.writeObject(tmp);
             objectOutputStream.flush();
         }
-        finished=DTOListOut.get(0).getPlayerDTO().getHealth()<=0 || DTOListOut.get(1).getPlayerDTO().getHealth()<=0;
+        finished=DTOListOut.get(PLAYER_ONE).getPlayerDTO().getHealth()<=0 || DTOListOut.get(PLAYER_TWO).getPlayerDTO().getHealth()<=0;
         objectOutputStream.flush();
         DTOListOut.clear();
         dto = null;

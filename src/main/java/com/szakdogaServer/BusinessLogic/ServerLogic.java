@@ -10,23 +10,18 @@ import org.datatransferobject.UnitDTO;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 public class ServerLogic implements Runnable{
     private BlockingQueue<DTO> blockingQueueIn;
     private BlockingQueue<ArrayList<DTO>> blockingQueueOut;
-    private PathFinder pathFinder;
+
     private ArrayList<DTO> DTOList = new ArrayList<>();
     private DB db ;
-    private Logger logger;
-    private DTOLogic dtoLogic;
+    private static Logger logger;
     public ServerLogic(BlockingQueue<DTO> blockingQueueIn,BlockingQueue<ArrayList<DTO>> blockingQueueOut,DB db){
         this.blockingQueueIn=blockingQueueIn;
         this.blockingQueueOut=blockingQueueOut;
-
-        pathFinder = new PathFinder();
         logger = LogManager.getLogger(ServerLogic.class);
-        dtoLogic=new DTOLogic(pathFinder);
         this.db=db;
     }
 
@@ -42,23 +37,17 @@ public class ServerLogic implements Runnable{
                 logger.trace(e.getMessage());
             }
             for(DTO dto:DTOList){
-                dtoLogic.checkIfDTOHasCorrectPossition(dto,db);
-                DTO enemyDTO = null;
-                if(dto==DTOList.get(0)){
-                    enemyDTO = DTOList.get(1);
-                }
-                else{
-                    enemyDTO = DTOList.get(0);
-                }
+                DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
+                DTO enemyDTO = DTOList.get(0) == dto?DTOList.get(1) : DTOList.get(0);
                 logger.info("Players stats checked");
-                for(UnitDTO unitDTO:dto.getUnitDTOs()) {
-                    dtoLogic.setupNewUnits(dto,unitDTO);
+                for(UnitDTO unitDTO : dto.getUnitDTOs()) {
+                    DTOLogic.setupNewUnits(dto,unitDTO);
                     attackBase(unitDTO, enemyDTO.getPlayerDTO());
-                    dtoLogic.step(unitDTO);
+                    DTOLogic.step(unitDTO);
                 }
                 logger.info("Units step has been made");
                 for(TowerDTO towerDTO:dto.getTowerDTOs()){
-                    dtoLogic.checkIfPlayerCanCreateTower(dto,enemyDTO,towerDTO);
+                    DTOLogic.checkIfPlayerCanCreateTower(dto,enemyDTO,towerDTO);
                     dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()+TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO));
                 }
                 logger.info("Towers attacked");
