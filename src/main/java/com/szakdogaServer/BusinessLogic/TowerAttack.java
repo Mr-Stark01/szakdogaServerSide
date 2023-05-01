@@ -1,6 +1,7 @@
 package com.szakdogaServer.BusinessLogic;
 
-import net.bytebuddy.dynamic.DynamicType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;
 
@@ -9,12 +10,11 @@ import java.util.Date;
 import java.util.List;
 
 public class TowerAttack {
-
     public static void checkIfEnemyStillInRangeAndAllive(List<UnitDTO> units,TowerDTO towerDTO){
         UnitDTO target = getTarget(units,towerDTO);
         if (target != null) {
             towerDTO.setTarget(deepCopyUnit(target));
-            if(target.getHealth() <=0){
+            if(target.getHealth() <= 0){
                 units.remove(towerDTO.getTarget());
                 towerDTO.setTarget(null);
                 findTarget(units,towerDTO);
@@ -31,13 +31,16 @@ public class TowerAttack {
     public static int attack(List<UnitDTO> units,TowerDTO towerDTO){
         if(towerDTO.getLastTimeOfAttack()+(long)(towerDTO.getAttackTime()*1000f) <= new Date().getTime() && towerDTO.getId() != Flags.FOR_REMOVAL_ID){
             checkIfEnemyStillInRangeAndAllive(units,towerDTO);
-            if(towerDTO.getTarget()!=null){
-                UnitDTO tmpTarget=getTarget(units,towerDTO);
+            UnitDTO tmpTarget=getTarget(units,towerDTO);
+            if(tmpTarget!=null){
                 tmpTarget.setHealth(towerDTO.getTarget().getHealth()-towerDTO.getDamage());
                 towerDTO.setLastTimeOfAttack(new Date().getTime());
                 tmpTarget.setId(tmpTarget.getHealth()<0?Flags.FOR_REMOVAL_ID:tmpTarget.getId());
                 towerDTO.getTarget().setHealth(tmpTarget.getHealth());
                 return tmpTarget.getPrice()/2;
+            }
+            else{
+                towerDTO.setTarget(null);
             }
         }
         return 0;

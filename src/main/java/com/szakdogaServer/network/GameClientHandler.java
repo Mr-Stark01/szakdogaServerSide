@@ -52,7 +52,6 @@ public class GameClientHandler implements Callable<Integer> {
 
     @Override
     public Integer call() {
-        System.out.println("here");
         while(true){
             try {
                 logger.info("Awaiting to received data");
