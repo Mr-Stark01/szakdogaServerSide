@@ -1,7 +1,5 @@
 package com.szakdogaServer.BusinessLogic;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;
 
@@ -10,47 +8,46 @@ import java.util.Date;
 import java.util.List;
 
 public class TowerAttack {
-    public static void checkIfEnemyStillInRangeAndAllive(List<UnitDTO> units,TowerDTO towerDTO){
-        UnitDTO target = getTarget(units,towerDTO);
+    public static void checkIfEnemyStillInRangeAndAllive(List<UnitDTO> units, TowerDTO towerDTO) {
+        UnitDTO target = getTarget(units, towerDTO);
         if (target != null) {
             towerDTO.setTarget(deepCopyUnit(target));
-            if(target.getHealth() <= 0){
+            if (target.getHealth() <= 0) {
                 units.remove(towerDTO.getTarget());
                 towerDTO.setTarget(null);
-                findTarget(units,towerDTO);
-            }
-            else if(!isInRange(towerDTO,target)){
+                findTarget(units, towerDTO);
+            } else if (!isInRange(towerDTO, target)) {
                 towerDTO.setTarget(null);
-                findTarget(units,towerDTO);
+                findTarget(units, towerDTO);
             }
         } else {
             findTarget(units, towerDTO);
         }
 
     }
-    public static int attack(List<UnitDTO> units,TowerDTO towerDTO){
-        if(towerDTO.getLastTimeOfAttack()+(long)(towerDTO.getAttackTime()*1000f) <= new Date().getTime() && towerDTO.getId() != Flags.FOR_REMOVAL_ID){
-            checkIfEnemyStillInRangeAndAllive(units,towerDTO);
-            UnitDTO tmpTarget=getTarget(units,towerDTO);
-            if(tmpTarget!=null){
-                tmpTarget.setHealth(towerDTO.getTarget().getHealth()-towerDTO.getDamage());
+
+    public static int attack(List<UnitDTO> units, TowerDTO towerDTO) {
+        if (towerDTO.getLastTimeOfAttack() + (long) (towerDTO.getAttackTime() * 1000f) <= new Date().getTime() && towerDTO.getId() != Flags.FOR_REMOVAL_ID) {
+            checkIfEnemyStillInRangeAndAllive(units, towerDTO);
+            UnitDTO tmpTarget = getTarget(units, towerDTO);
+            if (tmpTarget != null) {
+                tmpTarget.setHealth(towerDTO.getTarget().getHealth() - towerDTO.getDamage());
                 towerDTO.setLastTimeOfAttack(new Date().getTime());
-                tmpTarget.setId(tmpTarget.getHealth()<0?Flags.FOR_REMOVAL_ID:tmpTarget.getId());
+                tmpTarget.setId(tmpTarget.getHealth() < 0 ? Flags.FOR_REMOVAL_ID : tmpTarget.getId());
                 towerDTO.getTarget().setHealth(tmpTarget.getHealth());
-                return tmpTarget.getPrice()/2;
-            }
-            else{
+                return tmpTarget.getPrice() / 2;
+            } else {
                 towerDTO.setTarget(null);
             }
         }
         return 0;
     }
-    public static void findTarget(List<UnitDTO> units, TowerDTO towerDTO){
-        for(UnitDTO unit:units) {
-            if(isInRange(towerDTO,unit)){
+
+    public static void findTarget(List<UnitDTO> units, TowerDTO towerDTO) {
+        for (UnitDTO unit : units) {
+            if (isInRange(towerDTO, unit)) {
                 towerDTO.setTarget(deepCopyUnit(unit));
-            }
-            else{
+            } else {
                 towerDTO.setTarget(null);
             }
         }
@@ -58,29 +55,32 @@ public class TowerAttack {
 
     /**
      * Find the target in the UnitList and returns it
+     *
      * @param units
      * @param towerDTO
      * @return
      */
-    private static UnitDTO getTarget(List<UnitDTO> units,TowerDTO towerDTO){
-        if(towerDTO.getTarget()==null){
+    private static UnitDTO getTarget(List<UnitDTO> units, TowerDTO towerDTO) {
+        if (towerDTO.getTarget() == null) {
             return null;
         }
-        for(UnitDTO unit:units){
-            if(unit.getId()==towerDTO.getTarget().getId()){
+        for (UnitDTO unit : units) {
+            if (unit.getId() == towerDTO.getTarget().getId()) {
                 return unit;
             }
         }
         return null;
     }
+
     private static ArrayList<Integer> deepcopy(ArrayList<Integer> nextList) {
-        ArrayList<Integer> copy=new ArrayList<>();
-        for(int elem:nextList){
+        ArrayList<Integer> copy = new ArrayList<>();
+        for (int elem : nextList) {
             copy.add(elem);
         }
         return copy;
     }
-    private static UnitDTO deepCopyUnit(UnitDTO target){
+
+    private static UnitDTO deepCopyUnit(UnitDTO target) {
         return new UnitDTO(
                 target.getSpeed(),
                 target.getHealth(),
@@ -99,9 +99,10 @@ public class TowerAttack {
                 deepcopy((ArrayList<Integer>) target.getNextY()),
                 target.getLastStep());
     }
+
     //(Math.sqrt(Math.pow(target.getX() - towerDTO.getX(), 2) +
     //                    Math.pow(target.getY() - towerDTO.getY(), 2)) > towerDTO.getRange()){
-    private static boolean isInRange(TowerDTO towerDTO, UnitDTO target){
+    private static boolean isInRange(TowerDTO towerDTO, UnitDTO target) {
         return Math.sqrt(Math.pow(target.getX() - towerDTO.getX(), 2) +
                 Math.pow(target.getY() - towerDTO.getY(), 2)) <= towerDTO.getRange();
     }

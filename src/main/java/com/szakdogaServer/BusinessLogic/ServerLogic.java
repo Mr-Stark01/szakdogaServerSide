@@ -11,23 +11,23 @@ import org.datatransferobject.UnitDTO;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
-public class ServerLogic implements Runnable{
+public class ServerLogic implements Runnable {
+    private static Logger logger;
     private BlockingQueue<DTO> blockingQueueIn;
     private BlockingQueue<ArrayList<DTO>> blockingQueueOut;
-
     private ArrayList<DTO> DTOList = new ArrayList<>();
-    private DB db ;
-    private static Logger logger;
-    public ServerLogic(BlockingQueue<DTO> blockingQueueIn,BlockingQueue<ArrayList<DTO>> blockingQueueOut,DB db){
-        this.blockingQueueIn=blockingQueueIn;
-        this.blockingQueueOut=blockingQueueOut;
+    private DB db;
+
+    public ServerLogic(BlockingQueue<DTO> blockingQueueIn, BlockingQueue<ArrayList<DTO>> blockingQueueOut, DB db) {
+        this.blockingQueueIn = blockingQueueIn;
+        this.blockingQueueOut = blockingQueueOut;
         logger = LogManager.getLogger(ServerLogic.class);
-        this.db=db;
+        this.db = db;
     }
 
     @Override
     public void run() {
-        while (true){
+        while (true) {
             try {
                 DTOList.add(blockingQueueIn.take());
                 DTOList.add(blockingQueueIn.take());
@@ -36,25 +36,25 @@ public class ServerLogic implements Runnable{
                 logger.error("BlockingQueue thrown InteruptedException.Since only server should be capable of starting a shutdown this shouldn't happen");
                 logger.trace(e.getMessage());
             }
-            for(DTO dto:DTOList){
-                DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
-                DTO enemyDTO = DTOList.get(0) == dto?DTOList.get(1) : DTOList.get(0);
+            for (DTO dto : DTOList) {
+                DTOLogic.checkIfDTOHasCorrectPossition(dto, db);
+                DTO enemyDTO = DTOList.get(0) == dto ? DTOList.get(1) : DTOList.get(0);
                 logger.info("Players stats checked");
-                for(UnitDTO unitDTO : dto.getUnitDTOs()) {
-                    DTOLogic.setupNewUnits(dto,unitDTO);
+                for (UnitDTO unitDTO : dto.getUnitDTOs()) {
+                    DTOLogic.setupNewUnits(dto, unitDTO);
                     attackBase(unitDTO, enemyDTO.getPlayerDTO());
                     DTOLogic.step(unitDTO);
                 }
                 logger.info("Units step has been made");
-                for(TowerDTO towerDTO:dto.getTowerDTOs()){
-                    DTOLogic.checkIfPlayerCanCreateTower(dto,enemyDTO,towerDTO);
-                    dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney()+TowerAttack.attack(enemyDTO.getUnitDTOs(),towerDTO));
+                for (TowerDTO towerDTO : dto.getTowerDTOs()) {
+                    DTOLogic.checkIfPlayerCanCreateTower(dto, enemyDTO, towerDTO);
+                    dto.getPlayerDTO().setMoney(dto.getPlayerDTO().getMoney() + TowerAttack.attack(enemyDTO.getUnitDTOs(), towerDTO));
                 }
                 logger.info("Towers attacked");
-                if(dto.getPlayerDTO().getHealth()<=0){
+                if (dto.getPlayerDTO().getHealth() <= 0) {
                     logger.info("Game finished one player reached 0 health");
-                    db.addNameToDb(dto.getName(),dto.getPlayerDTO().getMoney(),0,1);
-                    db.addNameToDb(enemyDTO.getName(),enemyDTO.getPlayerDTO().getMoney(),1,0);
+                    db.addNameToDb(dto.getName(), dto.getPlayerDTO().getMoney(), 0, 1);
+                    db.addNameToDb(enemyDTO.getName(), enemyDTO.getPlayerDTO().getMoney(), 1, 0);
                     break;
                 }
             }
@@ -62,7 +62,7 @@ public class ServerLogic implements Runnable{
                 blockingQueueOut.offer(deepCopy(DTOList));
                 blockingQueueOut.offer(deepCopy(DTOList));
             }
-            while(!blockingQueueOut.isEmpty()){
+            while (!blockingQueueOut.isEmpty()) {
 
             }
             DTOList.clear();
@@ -72,26 +72,28 @@ public class ServerLogic implements Runnable{
 
     /**
      * Checks if unit can attack enemy base
+     *
      * @param unitDTO
      * @param playerDTO
      */
     private void attackBase(UnitDTO unitDTO, PlayerDTO playerDTO) {
-        if(unitDTO.getNextX().size()==1 && unitDTO.getNextX().get(0)==-1 && unitDTO.getNextY().get(0)==-1){
-            playerDTO.setHealth(playerDTO.getHealth()-unitDTO.getDamage());
+        if (unitDTO.getNextX().size() == 1 && unitDTO.getNextX().get(0) == -1 && unitDTO.getNextY().get(0) == -1) {
+            playerDTO.setHealth(playerDTO.getHealth() - unitDTO.getDamage());
             unitDTO.setId(-1);
         }
     }
 
     /**
      * Creates a copy of DTOList with new memory.
+     *
      * @param DTOList
      * @return
      */
-    public ArrayList<DTO> deepCopy(ArrayList<DTO> DTOList){
-        ArrayList<DTO> copy= new ArrayList<>();
-        for(DTO dto:DTOList){
+    public ArrayList<DTO> deepCopy(ArrayList<DTO> DTOList) {
+        ArrayList<DTO> copy = new ArrayList<>();
+        for (DTO dto : DTOList) {
             ArrayList<UnitDTO> unitCopy = new ArrayList<>();
-            for(UnitDTO unit:dto.getUnitDTOs()){
+            for (UnitDTO unit : dto.getUnitDTOs()) {
                 unitCopy.add(new UnitDTO(
                         unit.getSpeed(),
                         unit.getHealth(),
@@ -111,7 +113,7 @@ public class ServerLogic implements Runnable{
                         unit.getLastStep()));
             }
             ArrayList<TowerDTO> towerCopy = new ArrayList<>();
-            for(TowerDTO tower:dto.getTowerDTOs()) {
+            for (TowerDTO tower : dto.getTowerDTOs()) {
                 if (tower.getTarget() != null) {
                     UnitDTO unit = tower.getTarget();
                     towerCopy.add(new TowerDTO(
@@ -141,8 +143,7 @@ public class ServerLogic implements Runnable{
                             tower.getLastTimeOfAttack(),
                             tower.getId(),
                             tower.getTowerClass()));
-                }
-                else{
+                } else {
                     towerCopy.add(new TowerDTO(
                             tower.getX(),
                             tower.getY(),
@@ -156,12 +157,12 @@ public class ServerLogic implements Runnable{
                             tower.getTowerClass()));
                 }
             }
-            PlayerDTO player= dto.getPlayerDTO();
-            PlayerDTO playerCopy =new PlayerDTO(player.getMoney(),
+            PlayerDTO player = dto.getPlayerDTO();
+            PlayerDTO playerCopy = new PlayerDTO(player.getMoney(),
                     player.getPositionX(),
                     player.getPositionY(),
                     player.getHealth());
-            copy.add(new DTO(unitCopy,towerCopy,playerCopy,dto.getId(),dto.getName()));
+            copy.add(new DTO(unitCopy, towerCopy, playerCopy, dto.getId(), dto.getName()));
         }
         return copy;
     }

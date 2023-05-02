@@ -13,13 +13,13 @@ import org.mockito.Mockito;
 import java.io.IOException;
 
 
-
 public class Main {
     private static Application application;
+
     public static void main(String[] args) throws IOException {
         // Mocking up a headless graphics side
         Logger logger = LogManager.getLogger(Main.class);
-        while(true) {
+        while (true) {
             application = new HeadlessApplication(new ApplicationAdapter() {
             });
             logger.info("Headless Application setup");

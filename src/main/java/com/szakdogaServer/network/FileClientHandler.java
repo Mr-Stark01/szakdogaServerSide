@@ -3,23 +3,23 @@ package com.szakdogaServer.network;
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 
 public class FileClientHandler implements Callable<Integer> {
-    private final Socket clientSocket;
     private static DataOutputStream dataOutputStream = null;
     private static DataInputStream dataInputStream = null;
+    private final Socket clientSocket;
 
 
-    public FileClientHandler(Socket socket){
-        this.clientSocket=socket;
+    public FileClientHandler(Socket socket) {
+        this.clientSocket = socket;
         try {
             dataInputStream = new DataInputStream(clientSocket.getInputStream());
             dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     private static void sendFile(String path) throws IOException {
         int bytes;
         File file = new File(path);
@@ -27,9 +27,9 @@ public class FileClientHandler implements Callable<Integer> {
 
         dataOutputStream.writeLong(file.length());
 
-        byte[] buffer = new byte[4*1024];
-        while ((bytes=fileInputStream.read(buffer))!=-1){
-            dataOutputStream.write(buffer,0,bytes);
+        byte[] buffer = new byte[4 * 1024];
+        while ((bytes = fileInputStream.read(buffer)) != -1) {
+            dataOutputStream.write(buffer, 0, bytes);
             dataOutputStream.flush();
         }
         fileInputStream.close();

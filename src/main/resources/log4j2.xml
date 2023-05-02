@@ -14,14 +14,14 @@
                 </pattern>
             </PatternLayout>
             <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
-                <SizeBasedTriggeringPolicy size="10MB" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
             <!-- Max 10 files will be created everyday -->
             <DefaultRolloverStrategy max="10">
                 <Delete basePath="${basePath}" maxDepth="10">
                     <!-- Delete all files older than 30 days -->
-                    <IfLastModified age="30d" />
+                    <IfLastModified age="30d"/>
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
@@ -30,40 +30,40 @@
             <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
         <RollingFile name="errorLog" fileName="${basePath}/app-error.log"
-                     filePattern="${basePath}/app-error-%d{yyyy-MM-dd}-%i.log" >
+                     filePattern="${basePath}/app-error-%d{yyyy-MM-dd}-%i.log">
             <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
             <DefaultRolloverStrategy max="10"/>
         </RollingFile>
         <RollingFile name="traceLog" fileName="${basePath}/app-trace.log"
-                     filePattern="${basePath}/app-trace-%d{yyyy-MM-dd}-%i.log" >
+                     filePattern="${basePath}/app-trace-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
             <DefaultRolloverStrategy max="1"/>
         </RollingFile>
     </Appenders>
     <Loggers>
         <root additivity="false" level="info">
-            <appender-ref ref="fileLogger" />
+            <appender-ref ref="fileLogger"/>
         </root>
         <Logger name="debug" additivity="false" level="debug">
-            <appender-ref ref="debugLog" />
+            <appender-ref ref="debugLog"/>
         </Logger>
         <Logger name="error" additivity="false" level="error">
-            <appender-ref ref="errorLog" />
+            <appender-ref ref="errorLog"/>
         </Logger>
         <Logger name="trace" additivity="false" level="trace">
-            <appender-ref ref="traceLog" />
+            <appender-ref ref="traceLog"/>
         </Logger>
     </Loggers>
 </Configuration>
