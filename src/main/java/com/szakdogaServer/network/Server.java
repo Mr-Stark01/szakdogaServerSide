@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.*;
 
 public class Server {
@@ -46,6 +47,7 @@ public class Server {
                 f1.get();
                 f2.get();
                 logger.info("Both thread finished");
+                serverSocket.close();
                 executor.shutdownNow();
             } catch (InterruptedException | ExecutionException e) {
                 logger.error("One thread throw a unexpected exceptions shutting down");
