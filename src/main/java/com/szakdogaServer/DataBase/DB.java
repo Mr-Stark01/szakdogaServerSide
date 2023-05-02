@@ -11,7 +11,7 @@ public class DB {
     Connection conn;
     private Logger logger;
     public DB() {
-        logger = LogManager.getLogger(PathFinder.class);
+        logger = LogManager.getLogger(DB.class);
         try {
             // db parameters
             String url = "jdbc:sqlite:src/main/resources/db/game.db";
