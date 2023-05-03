@@ -47,6 +47,7 @@ public class TowerAttack {
         for (UnitDTO unit : units) {
             if (isInRange(towerDTO, unit)) {
                 towerDTO.setTarget(deepCopyUnit(unit));
+                return;
             } else {
                 towerDTO.setTarget(null);
             }

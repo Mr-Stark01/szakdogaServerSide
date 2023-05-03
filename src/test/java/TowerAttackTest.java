@@ -42,19 +42,19 @@ public class TowerAttackTest {
                 26,26,"Test",235,new ArrayList<>(),new ArrayList<>(),0l));
         TowerDTO towerDTO = new TowerDTO(20,20,5,10,
                 10,null,1f,1L,23123,"Test");
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
         units.get(0).setX(1000);
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
         units.get(0).setX(1000);
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
         units.get(0).setX(1000);
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
         units.get(0).setHealth(0);
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
     }
     @Test
@@ -72,19 +72,19 @@ public class TowerAttackTest {
                 26,26,"Test",235,new ArrayList<>(),new ArrayList<>(),0l));
         TowerDTO towerDTO = new TowerDTO(20,20,5,10,
                 10,null,1f,1L,23123,"Test");
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
         units.get(0).setX(1000);
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
         units.get(0).setY(1000);
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
         units.get(0).setX(1000);
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
         units.get(0).setHealth(0);
-        TowerAttack.checkIfEnemyStillInRangeAndAllive(units,towerDTO);
+        TowerAttack.attack(units,towerDTO);
         Assertions.assertEquals(towerDTO.getTarget().getId(),units.get(0).getId());
     }
     @Test

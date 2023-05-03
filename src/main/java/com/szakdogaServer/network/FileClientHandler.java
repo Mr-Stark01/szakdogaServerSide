@@ -1,5 +1,9 @@
 package com.szakdogaServer.network;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.Callable;
@@ -8,6 +12,7 @@ public class FileClientHandler implements Callable<Integer> {
     private static DataOutputStream dataOutputStream = null;
     private static DataInputStream dataInputStream = null;
     private final Socket clientSocket;
+    private static Logger logger = LogManager.getLogger(FileClientHandler.class);
 
 
     public FileClientHandler(Socket socket) {
@@ -16,7 +21,7 @@ public class FileClientHandler implements Callable<Integer> {
             dataInputStream = new DataInputStream(clientSocket.getInputStream());
             dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
     }
 
@@ -36,18 +41,15 @@ public class FileClientHandler implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() {
         System.out.println("New Client connected.");
         try {
-            sendFile("src/assets/Base.tmx");
+            sendFile("src/main/resources/maps/defmap.tmx");
         } catch (IOException e) {
+            System.err.println("There was an error with sending map");
             e.printStackTrace();
-        }
-        try {
-            dataInputStream.close();
-            dataOutputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.trace(e.getMessage());
+            System.exit(-1);
         }
         return 0;
     }
