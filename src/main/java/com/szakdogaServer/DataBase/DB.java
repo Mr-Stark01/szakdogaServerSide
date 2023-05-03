@@ -9,8 +9,9 @@ import java.sql.*;
 public class DB {
     Connection conn;
     private Logger logger;
+    private static DB instance = new DB();
 
-    public DB() {
+    private DB(){
         logger = LogManager.getLogger(DB.class);
         try {
             // db parameters
@@ -24,6 +25,12 @@ public class DB {
             logger.trace(e.getMessage());
             System.exit(-1);
         }
+    }
+    public static DB getInstance(){
+        if(instance==null){
+            instance=new DB();
+        }
+        return instance;
     }
 
     public int getPlayerPositionX(int playerCount) {

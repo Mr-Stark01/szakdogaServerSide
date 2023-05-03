@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 public class DBTest {
     @Test
     public void TestingIfDBexistsAndProperlyConnects(){
-        DB db = new DB();
+        DB db = DB.getInstance();
         Assertions.assertDoesNotThrow(() -> db.getPlayerPositionY(1));
     }
     @Test
     public void TestIfDBReturnsResultsProperly(){
-        DB db = new DB();
+        DB db = DB.getInstance();
         Assertions.assertTrue(db.getPlayerPositionX(1)>0);
     }
 }

@@ -23,7 +23,7 @@ public class PathFinderTest {
         Gdx.gl = Gdx.gl20;
 
         pathFinder = new PathFinder();
-        db = new DB();
+        db = DB.getInstance();
     }
     @Test
     public void CorrectStartingTileInDB(){

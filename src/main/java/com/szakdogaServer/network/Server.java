@@ -22,7 +22,7 @@ public class Server {
     private ServerSocket fileServerSocket;
     private ArrayList<Socket> players;
     private ArrayList<Socket> fileSockets;
-    private DB db = new DB();
+    private DB db = DB.getInstance();
     private CyclicBarrier barrier = new CyclicBarrier(PARTIES);
     private BlockingQueue<DTO> blockingQueueToLogicFromClients = new LinkedBlockingQueue<>(PARTIES);
     private BlockingQueue<ArrayList<DTO>> blockingQueueToClientsFromLogic = new LinkedBlockingQueue<>(PARTIES);
