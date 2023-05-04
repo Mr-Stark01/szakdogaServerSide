@@ -45,6 +45,7 @@
         </RollingFile>
         <RollingFile name="traceLog" fileName="${basePath}/app-trace.log"
                      filePattern="${basePath}/app-trace-%d{yyyy-MM-dd}-%i.log">
+            <LevelRangeFilter minLevel="TRACE" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -53,8 +54,11 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <root additivity="false" level="info">
-            <appender-ref ref="fileLogger"/>
+        <root additivity="false" level="all">
+            <appender-ref ref="fileLogger" level="info"/>
+            <appender-ref ref="debugLog" level="debug"/>
+            <appender-ref ref="errorLog" level="error"/>
+            <appender-ref ref="traceLog" level="trace"/>
         </root>
         <Logger name="debug" additivity="false" level="debug">
             <appender-ref ref="debugLog"/>
