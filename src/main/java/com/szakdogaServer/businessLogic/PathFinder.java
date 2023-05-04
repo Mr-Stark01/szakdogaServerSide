@@ -1,4 +1,4 @@
-package com.szakdogaServer.BusinessLogic;
+package com.szakdogaServer.businessLogic;
 
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;

@@ -1,4 +1,4 @@
-package com.szakdogaServer.BusinessLogic;
+package com.szakdogaServer.businessLogic;
 
 import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;

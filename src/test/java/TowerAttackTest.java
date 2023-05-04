@@ -1,4 +1,4 @@
-import com.szakdogaServer.BusinessLogic.TowerAttack;
+import com.szakdogaServer.businessLogic.TowerAttack;
 import org.datatransferobject.TowerDTO;
 import org.datatransferobject.UnitDTO;
 import org.junit.jupiter.api.Assertions;

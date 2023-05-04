@@ -1,8 +1,8 @@
 package com.szakdogaServer.network;
 
 import com.badlogic.gdx.Gdx;
-import com.szakdogaServer.BusinessLogic.ServerLogic;
-import com.szakdogaServer.DataBase.DB;
+import com.szakdogaServer.businessLogic.ServerLogic;
+import com.szakdogaServer.dataBase.DB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;
@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.concurrent.*;
 
 public class Server {

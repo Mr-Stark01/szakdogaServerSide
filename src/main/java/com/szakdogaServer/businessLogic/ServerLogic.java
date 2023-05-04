@@ -1,6 +1,6 @@
-package com.szakdogaServer.BusinessLogic;
+package com.szakdogaServer.businessLogic;
 
-import com.szakdogaServer.DataBase.DB;
+import com.szakdogaServer.dataBase.DB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;

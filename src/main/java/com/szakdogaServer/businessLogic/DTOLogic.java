@@ -1,6 +1,6 @@
-package com.szakdogaServer.BusinessLogic;
+package com.szakdogaServer.businessLogic;
 
-import com.szakdogaServer.DataBase.DB;
+import com.szakdogaServer.dataBase.DB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;
@@ -9,7 +9,7 @@ import org.datatransferobject.UnitDTO;
 
 import java.util.Date;
 
-import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
+import static com.szakdogaServer.businessLogic.IdCreator.getNewId;
 
 /**
  * This class facilitates everything that only requires 1 dto and not both.

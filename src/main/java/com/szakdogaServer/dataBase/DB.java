@@ -1,4 +1,4 @@
-package com.szakdogaServer.DataBase;
+package com.szakdogaServer.dataBase;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,4 +1,4 @@
-import com.szakdogaServer.DataBase.DB;
+import com.szakdogaServer.dataBase.DB;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

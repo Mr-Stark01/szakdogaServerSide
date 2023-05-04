@@ -15,7 +15,7 @@ import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CyclicBarrier;
 
-import static com.szakdogaServer.BusinessLogic.IdCreator.getNewId;
+import static com.szakdogaServer.businessLogic.IdCreator.getNewId;
 
 public class GameClientHandler implements Callable<Integer> {
     private final int PLAYER_ONE = 0;

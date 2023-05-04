@@ -1,4 +1,4 @@
-package com.szakdogaServer.BusinessLogic;
+package com.szakdogaServer.businessLogic;
 
 public class Flags {
     //ID

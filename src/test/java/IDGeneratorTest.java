@@ -1,4 +1,4 @@
-import com.szakdogaServer.BusinessLogic.IdCreator;
+import com.szakdogaServer.businessLogic.IdCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 

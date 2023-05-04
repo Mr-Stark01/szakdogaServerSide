@@ -1,4 +1,4 @@
-package com.szakdogaServer.BusinessLogic;
+package com.szakdogaServer.businessLogic;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
