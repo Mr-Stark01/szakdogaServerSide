@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.datatransferobject.DTO;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -48,7 +49,13 @@ public class Server {
             }
             fileServerSocket.close();
             */
-            serverSocket = new ServerSocket(port);
+            try {
+                serverSocket = new ServerSocket(port);
+            }catch (BindException e){
+                serverSocket = new ServerSocket(0);
+                System.out.println("Given port wasn't avaible other port was used");
+                System.out.println(serverSocket.getLocalPort());
+            }
             logger.info("Server socket created");
             ServerLogic serverLogic = new ServerLogic(blockingQueueToLogicFromClients, blockingQueueToClientsFromLogic, db);
             players = new ArrayList<>();
@@ -74,6 +81,7 @@ public class Server {
         } catch (IOException e) {
             logger.error("An error occured on one of the threads");
             logger.trace(e.getMessage());
+            e.printStackTrace();
             stop();
             System.exit(-1);
         }
