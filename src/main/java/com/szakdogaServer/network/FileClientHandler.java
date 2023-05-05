@@ -1,25 +1,30 @@
 package com.szakdogaServer.network;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+
 import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 
 public class FileClientHandler implements Callable<Integer> {
-    private final Socket clientSocket;
     private static DataOutputStream dataOutputStream = null;
     private static DataInputStream dataInputStream = null;
+    private final Socket clientSocket;
+    private static Logger logger = LogManager.getLogger(FileClientHandler.class);
 
 
-    public FileClientHandler(Socket socket){
-        this.clientSocket=socket;
+    public FileClientHandler(Socket socket) {
+        this.clientSocket = socket;
         try {
             dataInputStream = new DataInputStream(clientSocket.getInputStream());
             dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
-        }catch (IOException e){
-            e.printStackTrace();
+        } catch (IOException e) {
+
         }
     }
+
     private static void sendFile(String path) throws IOException {
         int bytes;
         File file = new File(path);
@@ -27,27 +32,24 @@ public class FileClientHandler implements Callable<Integer> {
 
         dataOutputStream.writeLong(file.length());
 
-        byte[] buffer = new byte[4*1024];
-        while ((bytes=fileInputStream.read(buffer))!=-1){
-            dataOutputStream.write(buffer,0,bytes);
+        byte[] buffer = new byte[4 * 1024];
+        while ((bytes = fileInputStream.read(buffer)) != -1) {
+            dataOutputStream.write(buffer, 0, bytes);
             dataOutputStream.flush();
         }
         fileInputStream.close();
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() {
         System.out.println("New Client connected.");
         try {
-            sendFile("src/assets/Base.tmx");
+            sendFile("src/main/resources/maps/defmap.tmx");
         } catch (IOException e) {
+            System.err.println("There was an error with sending map");
             e.printStackTrace();
-        }
-        try {
-            dataInputStream.close();
-            dataOutputStream.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.trace(e.getMessage());
+            System.exit(-1);
         }
         return 0;
     }

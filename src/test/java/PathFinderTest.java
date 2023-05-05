@@ -2,8 +2,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.graphics.GL20;
-import com.szakdogaServer.BusinessLogic.PathFinder;
-import com.szakdogaServer.DataBase.DB;
+import com.szakdogaServer.businessLogic.PathFinder;
+import com.szakdogaServer.dataBase.DB;
 import org.datatransferobject.UnitDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public class PathFinderTest {
         Gdx.gl = Gdx.gl20;
 
         pathFinder = new PathFinder();
-        db = new DB();
+        db = DB.getInstance();
     }
     @Test
     public void CorrectStartingTileInDB(){

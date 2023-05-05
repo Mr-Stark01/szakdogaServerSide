@@ -1,14 +1,12 @@
-import com.szakdogaServer.BusinessLogic.IdCreator;
+import com.szakdogaServer.businessLogic.IdCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class IDGeneratorTest {
 
-    @Test
     @RepeatedTest(5)
     public void testIfItCreateDuplicates(){
         Set<Integer> set = new HashSet<>();

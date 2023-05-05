@@ -13,23 +13,22 @@ import org.mockito.Mockito;
 import java.io.IOException;
 
 
-
 public class Main {
     private static Application application;
+
     public static void main(String[] args) throws IOException {
         // Mocking up a headless graphics side
         Logger logger = LogManager.getLogger(Main.class);
-        logger.debug("pls work");
-        application = new HeadlessApplication(new ApplicationAdapter() {
-        });
-        logger.info("Headless Application setup");
-        Gdx.gl20 = Mockito.mock(GL20.class);
-        Gdx.gl = Gdx.gl20;
-        logger.info("Necessary graphical elements successfully mocked");
-        Server server = new Server();
-        server.start(56227);
-        application.exit();
-        Gdx.app.exit();
-        System.exit(0);
+        while (true) {
+            System.out.println("New Game Started");
+            application = new HeadlessApplication(new ApplicationAdapter() {
+            });
+            logger.info("Headless Application setup");
+            Gdx.gl20 = Mockito.mock(GL20.class);
+            Gdx.gl = Gdx.gl20;
+            logger.info("Necessary graphical elements successfully mocked");
+            Server server = new Server();
+            server.start(56227);
+        }
     }
 }
