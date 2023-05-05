@@ -33,7 +33,13 @@ public class Server {
 
     public void start(int port) {
         try {
-            /*fileServerSocket = new ServerSocket(port);
+            try {
+                fileServerSocket = new ServerSocket(port);
+            }catch (BindException e){
+                fileServerSocket = new ServerSocket(0);
+                System.out.println("Given port wasn't avaible other port was used");
+                System.out.println(fileServerSocket.getLocalPort());
+            }
             fileSockets = new ArrayList<>();
             while (fileSockets.size() < PARTIES) {
                 fileSockets.add(fileServerSocket.accept());
@@ -48,7 +54,7 @@ public class Server {
                 logger.trace(e.getMessage());
             }
             fileServerSocket.close();
-            */
+
             try {
                 serverSocket = new ServerSocket(port);
             }catch (BindException e){

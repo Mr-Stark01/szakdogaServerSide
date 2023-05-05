@@ -20,6 +20,7 @@ public class Main {
         // Mocking up a headless graphics side
         Logger logger = LogManager.getLogger(Main.class);
         while (true) {
+            System.out.println("New Game Started");
             application = new HeadlessApplication(new ApplicationAdapter() {
             });
             logger.info("Headless Application setup");
