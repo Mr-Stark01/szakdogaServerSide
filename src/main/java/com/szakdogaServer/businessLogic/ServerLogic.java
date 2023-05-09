@@ -166,7 +166,7 @@ public class ServerLogic implements Runnable {
                 copy.add(new DTO(unitCopy, towerCopy, playerCopy, dto.getId(), dto.getName(),dto.getMessage()));
             }
             else {
-                copy.add(new DTO(unitCopy, towerCopy, playerCopy, dto.getId(), dto.getName()));
+                copy.add(new DTO(unitCopy, towerCopy, playerCopy, dto.getId(), dto.getName(),null));
             }
         }
         return copy;

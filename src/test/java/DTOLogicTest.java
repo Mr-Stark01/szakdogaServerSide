@@ -28,7 +28,7 @@ public class DTOLogicTest {
     public void TestIfReturnCorrectResultsForSpawnPoints(){
         DB db= DB.getInstance();
         DTO dto=new DTO(null,null,new PlayerDTO(100,-1,-1,100),
-                0,null);
+                0,null,null);
         DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
         Assertions.assertTrue(dto.getPlayerDTO().getPositionX()>0);
         Assertions.assertTrue(dto.getPlayerDTO().getPositionY()>0);
@@ -37,7 +37,7 @@ public class DTOLogicTest {
     public void SetupUnits(){
         DB db= DB.getInstance();
         DTO dto=new DTO(null,null,new PlayerDTO(100,-1,-1,100),
-                0,null);
+                0,null,null);
         DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
         UnitDTO unitDTO=new UnitDTO(1,1,1,1,dto.getPlayerDTO().getPositionX()
                 ,dto.getPlayerDTO().getPositionY()
@@ -52,7 +52,7 @@ public class DTOLogicTest {
     public void SetupUnitsNotEnoughMoney(){
         DB db= DB.getInstance();
         DTO dto=new DTO(null,null,new PlayerDTO(100,-1,-1,100),
-                0,null);
+                0,null,null);
         DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
         UnitDTO unitDTO=new UnitDTO(1,1,1,120,dto.getPlayerDTO().getPositionX()
                 ,dto.getPlayerDTO().getPositionY()
@@ -65,7 +65,7 @@ public class DTOLogicTest {
     public void SetupUnitWrongUnitStartPos(){
         DB db= DB.getInstance();
         DTO dto=new DTO(null,null,new PlayerDTO(100,-1,-1,100),
-                0,null);
+                0,null,null);
         DTOLogic.checkIfDTOHasCorrectPossition(dto,db);
         UnitDTO unitDTO=new UnitDTO(1,1,1,120,dto.getPlayerDTO().getPositionX()
                 ,dto.getPlayerDTO().getPositionY()
