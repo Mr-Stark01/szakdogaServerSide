@@ -162,7 +162,12 @@ public class ServerLogic implements Runnable {
                     player.getPositionX(),
                     player.getPositionY(),
                     player.getHealth());
-            copy.add(new DTO(unitCopy, towerCopy, playerCopy, dto.getId(), dto.getName()));
+            if(dto.getMessage()!=null){
+                copy.add(new DTO(unitCopy, towerCopy, playerCopy, dto.getId(), dto.getName(),dto.getMessage()));
+            }
+            else {
+                copy.add(new DTO(unitCopy, towerCopy, playerCopy, dto.getId(), dto.getName()));
+            }
         }
         return copy;
     }

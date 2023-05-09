@@ -79,6 +79,9 @@ public class GameClientHandler implements Callable<Integer> {
             dto.setId(id);
             setup = false;
         }
+        if(dto.getMessage()!=null){
+            System.out.println(dto.getMessage());
+        }
         logger.debug("message received");
     }
 
