@@ -37,12 +37,12 @@ public class Server {
                 fileServerSocket = new ServerSocket(port);
             }catch (BindException e){
                 fileServerSocket = new ServerSocket(0);
-                System.out.println("Given port wasn't avaible other port was used");
+                System.out.println("Given port wasn't available other port was used");
                 System.out.println(fileServerSocket.getLocalPort());
             }
             fileSockets = new ArrayList<>();
             while (fileSockets.size() < PARTIES) {
-                fileSockets.add(fileServerSocket.accept());
+                    fileSockets.add(fileServerSocket.accept());
             }
             try {
             Future<Integer> f1 = executor.submit(new FileClientHandler(fileSockets.get(0)));
@@ -59,7 +59,7 @@ public class Server {
                 serverSocket = new ServerSocket(port);
             }catch (BindException e){
                 serverSocket = new ServerSocket(0);
-                System.out.println("Given port wasn't avaible other port was used");
+                System.out.println("Given port wasn't available other port was used");
                 System.out.println(serverSocket.getLocalPort());
             }
             logger.info("Server socket created");
