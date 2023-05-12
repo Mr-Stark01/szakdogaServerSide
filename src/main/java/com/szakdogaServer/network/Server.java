@@ -19,6 +19,7 @@ public class Server {
     private final int PARTIES = 2;
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
     private ServerSocket serverSocket;
+    private int port=0;
     private ServerSocket fileServerSocket;
     private ArrayList<Socket> players;
     private ArrayList<Socket> fileSockets;
@@ -32,11 +33,13 @@ public class Server {
     }
 
     public void start(int port) {
+        this.port = port;
         try {
             try {
                 fileServerSocket = new ServerSocket(port);
             }catch (BindException e){
                 fileServerSocket = new ServerSocket(0);
+                port = fileServerSocket.getLocalPort();
                 System.out.println("Given port wasn't available other port was used");
                 System.out.println(fileServerSocket.getLocalPort());
             }
@@ -58,9 +61,9 @@ public class Server {
             try {
                 serverSocket = new ServerSocket(port);
             }catch (BindException e){
-                serverSocket = new ServerSocket(0);
-                System.out.println("Given port wasn't available other port was used");
+                System.out.println("Given port became unavaible during switch from file sharing to game server server cannot guarantee client will be able to follow.");
                 System.out.println(serverSocket.getLocalPort());
+                System.exit(-1);
             }
             logger.info("Server socket created");
             ServerLogic serverLogic = new ServerLogic(blockingQueueToLogicFromClients, blockingQueueToClientsFromLogic, db);
