@@ -41,7 +41,8 @@ public class Server {
                 fileServerSocket = new ServerSocket(0);
                 port = fileServerSocket.getLocalPort();
                 System.out.println("Given port wasn't available other port was used");
-                System.out.println(fileServerSocket.getLocalPort());
+                System.out.println("New port:"+fileServerSocket.getLocalPort());
+                logger.error("Proper port cannot be used. New port:"+fileServerSocket.getLocalPort());
             }
             fileSockets = new ArrayList<>();
             while (fileSockets.size() < PARTIES) {
@@ -62,7 +63,8 @@ public class Server {
                 serverSocket = new ServerSocket(port);
             }catch (BindException e){
                 System.out.println("Given port became unavaible during switch from file sharing to game server server cannot guarantee client will be able to follow.");
-                System.out.println(serverSocket.getLocalPort());
+                System.out.println("New port:"+serverSocket.getLocalPort());
+                logger.error("Proper port cannot be used. New port:"+serverSocket.getLocalPort());
                 System.exit(-1);
             }
             logger.info("Server socket created");
